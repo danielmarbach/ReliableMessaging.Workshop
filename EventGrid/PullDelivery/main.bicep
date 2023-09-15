@@ -52,3 +52,8 @@ resource EventGridSubscription 'Microsoft.EventGrid/namespaces/topics/eventSubsc
   parent: EventGridTopic
   name: subscriptionName
 }
+
+var eventGridConnectionString = EventGridNamespace.listKeys().key1
+
+output eventGridConnectionString string = eventGridConnectionString
+output eventGridName string = EventGridNamespace.name

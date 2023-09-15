@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.21.1.54444",
-      "templateHash": "17000009938638942601"
+      "templateHash": "6217903208703285482"
     }
   },
   "parameters": {
@@ -85,5 +85,15 @@
         "[resourceId('Microsoft.EventGrid/namespaces/topics', parameters('namespaceName'), parameters('topicName'))]"
       ]
     }
-  ]
+  ],
+  "outputs": {
+    "eventGridConnectionString": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.EventGrid/namespaces', parameters('namespaceName')), '2023-06-01-preview').key1]"
+    },
+    "eventGridName": {
+      "type": "string",
+      "value": "[parameters('namespaceName')]"
+    }
+  }
 }
