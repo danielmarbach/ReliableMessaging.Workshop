@@ -4,5 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Azure.Messaging.EventGrid" Version="4.18.0-beta.1" />
+    <PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.16.1" />
+    <PackageVersion Include="Microsoft.Extensions.Azure" Version="1.7.0" />
   </ItemGroup>
 </Project>

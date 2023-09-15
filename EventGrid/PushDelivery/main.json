@@ -1,0 +1,100 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.21.1.54444",
+      "templateHash": "4702692233739295522"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "namespaceName": {
+      "type": "string",
+      "defaultValue": "ReliableMessagingServiceBus1"
+    },
+    "topicName": {
+      "type": "string",
+      "defaultValue": "ReliableMessagingServiceBus1Topic"
+    },
+    "subscriptionName": {
+      "type": "string",
+      "defaultValue": "ReliableMessagingServiceBus1TopicSubscription"
+    },
+    "endpointUrl": {
+      "type": "string",
+      "defaultValue": "https://mule-elegant-rat.ngrok-free.app/api/EventGridEventHandler"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ServiceBus/namespaces",
+      "apiVersion": "2022-10-01-preview",
+      "name": "[parameters('namespaceName')]",
+      "sku": {
+        "name": "Premium",
+        "tier": "Premium",
+        "capacity": 1
+      },
+      "location": "[parameters('location')]",
+      "tags": {},
+      "properties": {
+        "premiumMessagingPartitions": 1,
+        "publicNetworkAccess": "Enabled",
+        "disableLocalAuth": false,
+        "zoneRedundant": true
+      }
+    },
+    {
+      "type": "Microsoft.EventGrid/systemTopics",
+      "apiVersion": "2023-06-01-preview",
+      "name": "[parameters('topicName')]",
+      "properties": {
+        "source": "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaceName'))]",
+        "topicType": "Microsoft.ServiceBus.Namespaces"
+      },
+      "identity": {
+        "type": "None"
+      },
+      "location": "[parameters('location')]",
+      "tags": {},
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaceName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.EventGrid/eventSubscriptions",
+      "apiVersion": "2022-06-15",
+      "scope": "[format('Microsoft.EventGrid/systemTopics/{0}', parameters('topicName'))]",
+      "name": "[parameters('subscriptionName')]",
+      "properties": {
+        "destination": {
+          "endpointType": "WebHook",
+          "properties": {
+            "maxEventsPerBatch": 1,
+            "preferredBatchSizeInKilobytes": 64,
+            "endpointUrl": "[parameters('endpointUrl')]"
+          }
+        },
+        "filter": {
+          "includedEventTypes": [
+            "Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners"
+          ],
+          "enableAdvancedFilteringOnArrays": true
+        },
+        "eventDeliverySchema": "EventGridSchema",
+        "retryPolicy": {
+          "maxDeliveryAttempts": 30,
+          "eventTimeToLiveInMinutes": 1440
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.EventGrid/systemTopics', parameters('topicName'))]"
+      ]
+    }
+  ]
+}
