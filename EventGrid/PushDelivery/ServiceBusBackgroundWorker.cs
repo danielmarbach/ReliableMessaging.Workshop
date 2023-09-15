@@ -14,7 +14,7 @@ public class ServiceBusBackgroundWorker : BackgroundService
         this.serviceBusClient = serviceBusClient;
         this.loggerFactory = loggerFactory;
     }
-    
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -27,41 +27,23 @@ public class ServiceBusBackgroundWorker : BackgroundService
         }
     }
 
-    async Task Process(FetchMessages fetchMessages, CancellationToken cancellationToken)
+    async Task Process(FetchMessagesFromQueue fetchMessages, CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger(fetchMessages.Queue);
-        await using var processor = serviceBusClient.CreateProcessor(fetchMessages.Queue, new ServiceBusProcessorOptions
+        await using var receiver = serviceBusClient.CreateReceiver(fetchMessages.Queue, new ServiceBusReceiverOptions
         {
-            MaxConcurrentCalls = Environment.ProcessorCount,
-            AutoCompleteMessages = true
+            // for the demo
+            PrefetchCount = 10,
+            ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete
         });
-        processor.ProcessMessageAsync += args =>
-        {
-            logger.LogInformation($"Handled messages with content '{args.Message.Body}'");
-            return Task.CompletedTask;
-        };
-        processor.ProcessErrorAsync += args =>
-        {
-            logger.LogError(args.Exception, "Failure during processing");
-            return Task.CompletedTask;
-        };
+        logger.LogInformation("Starting processing");
 
-        logger.LogInformation("Starting processing for 5 seconds");
-        await processor.StartProcessingAsync(cancellationToken);
-
-        await Task.Delay(5000, cancellationToken);
+        var messages = await receiver.ReceiveMessagesAsync(int.MaxValue, cancellationToken: cancellationToken);
+        foreach (var message in messages)
+        {
+            logger.LogInformation($"Handled messages with content '{message.Body}'");
+        }
 
         logger.LogInformation("Stopping processing");
-        await processor.StopProcessingAsync(cancellationToken);
     }
-}
-
-public record FetchMessages
-{
-    public FetchMessages(string queue)
-    {
-        Queue = queue;
-    }
-
-    public string Queue { get; init; }
 }

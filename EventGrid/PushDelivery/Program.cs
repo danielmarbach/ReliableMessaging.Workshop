@@ -42,9 +42,13 @@ app.Use(async (context, next) =>
 app.MapPost("/api/EventGridEventHandler", async ([FromBody] object request, Queue queue) =>
 {
     var cloudEvent = CloudEvent.Parse(BinaryData.FromObjectAsJson(request));
-    if (cloudEvent.TryGetSystemEventData(out var systemEvent) && systemEvent is ServiceBusActiveMessagesAvailableWithNoListenersEventData noListenersEventData)
+    if (cloudEvent.TryGetSystemEventData(out var systemEvent) && 
+        systemEvent is ServiceBusActiveMessagesAvailableWithNoListenersEventData
+        {
+            EntityType: "queue"
+        } queueEventData)
     {
-        await queue.Enqueue(new FetchMessages(noListenersEventData.QueueName));
+        await queue.Enqueue(new FetchMessagesFromQueue(queueEventData.QueueName));
     }
 });
 

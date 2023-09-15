@@ -4,11 +4,11 @@ namespace PushDelivery;
 
 public class Queue
 {
-    private readonly Channel<FetchMessages> channel;
+    private readonly Channel<FetchMessagesFromQueue> channel;
 
     public Queue()
     {
-        channel = Channel.CreateUnbounded<FetchMessages>(new UnboundedChannelOptions
+        channel = Channel.CreateUnbounded<FetchMessagesFromQueue>(new UnboundedChannelOptions
         {
             SingleReader = true,
             SingleWriter = false,
@@ -16,19 +16,19 @@ public class Queue
         });
     }
 
-    public async ValueTask Enqueue(FetchMessages fetchMessages)
+    public async ValueTask Enqueue(FetchMessagesFromQueue fetchMessages)
     {
         await channel.Writer.WriteAsync(fetchMessages);
     }
 
-    public async ValueTask<IReadOnlyCollection<FetchMessages>> Read(CancellationToken cancellationToken)
+    public async ValueTask<IReadOnlyCollection<FetchMessagesFromQueue>> Read(CancellationToken cancellationToken)
     {
         if (!await channel.Reader.WaitToReadAsync(cancellationToken))
         {
-            return Array.Empty<FetchMessages>();
+            return Array.Empty<FetchMessagesFromQueue>();
         }
 
-        var hashSet = new HashSet<FetchMessages>(EqualityComparer<FetchMessages>.Default);
+        var hashSet = new HashSet<FetchMessagesFromQueue>(EqualityComparer<FetchMessagesFromQueue>.Default);
         while (channel.Reader.TryRead(out var fetchMessage))
         {
             hashSet.Add(fetchMessage);
