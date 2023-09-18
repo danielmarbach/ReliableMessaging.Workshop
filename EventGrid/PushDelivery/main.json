@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.21.1.54444",
-      "templateHash": "4702692233739295522"
+      "templateHash": "17556988452917843097"
     }
   },
   "parameters": {
@@ -27,7 +27,7 @@
     },
     "endpointUrl": {
       "type": "string",
-      "defaultValue": "https://mule-elegant-rat.ngrok-free.app/api/EventGridEventHandler"
+      "defaultValue": "https://XYZ.ngrok-free.app/api/EventGridEventHandler"
     }
   },
   "resources": [
@@ -67,10 +67,9 @@
       ]
     },
     {
-      "type": "Microsoft.EventGrid/eventSubscriptions",
-      "apiVersion": "2022-06-15",
-      "scope": "[format('Microsoft.EventGrid/systemTopics/{0}', parameters('topicName'))]",
-      "name": "[parameters('subscriptionName')]",
+      "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
+      "apiVersion": "2023-06-01-preview",
+      "name": "[format('{0}/{1}', parameters('topicName'), parameters('subscriptionName'))]",
       "properties": {
         "destination": {
           "endpointType": "WebHook",
@@ -86,7 +85,7 @@
           ],
           "enableAdvancedFilteringOnArrays": true
         },
-        "eventDeliverySchema": "EventGridSchema",
+        "eventDeliverySchema": "CloudEventSchemaV1_0",
         "retryPolicy": {
           "maxDeliveryAttempts": 30,
           "eventTimeToLiveInMinutes": 1440

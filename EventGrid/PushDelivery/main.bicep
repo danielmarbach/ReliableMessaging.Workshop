@@ -35,7 +35,7 @@ resource EventGridTopic 'Microsoft.EventGrid/systemTopics@2023-06-01-preview' = 
   name: topicName
 }
 
-resource EventGridSubscription 'Microsoft.EventGrid/eventSubscriptions@2023-06-01-preview' = {
+resource EventGridSubscription 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2023-06-01-preview' = {
   properties: {
     destination: {
       endpointType: 'WebHook'
@@ -57,6 +57,6 @@ resource EventGridSubscription 'Microsoft.EventGrid/eventSubscriptions@2023-06-0
       eventTimeToLiveInMinutes: 1440
     }
   }
-  scope: EventGridTopic
   name: subscriptionName
+  parent: EventGridTopic
 }
