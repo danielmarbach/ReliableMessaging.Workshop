@@ -8,6 +8,7 @@
 - [Schema Registry for Kafka Applications – Public Preview](https://techcommunity.microsoft.com/t5/messaging-on-azure-blog/json-schema-support-in-azure-event-hubs-schema-registry-for/ba-p/3825655)
 - [Building A Custom Event Hubs Event Processor with .NET](https://devblogs.microsoft.com/azure-sdk/custom-event-processor/)
 - [Samples](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/eventhub/Azure.Messaging.EventHubs/samples)
+- [Event Processor Samples](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/eventhub/Azure.Messaging.EventHubs.Processor/samples)
 
 ### Event Grid
 
