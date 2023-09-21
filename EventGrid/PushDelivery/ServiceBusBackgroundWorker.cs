@@ -33,12 +33,12 @@ public class ServiceBusBackgroundWorker : BackgroundService
         await using var receiver = serviceBusClient.CreateReceiver(fetchMessages.Queue, new ServiceBusReceiverOptions
         {
             // for the demo
-            PrefetchCount = 10,
+            PrefetchCount = 100,
             ReceiveMode = ServiceBusReceiveMode.ReceiveAndDelete
         });
         logger.LogInformation("Starting processing");
 
-        var messages = await receiver.ReceiveMessagesAsync(int.MaxValue, cancellationToken: cancellationToken);
+        var messages = await receiver.ReceiveMessagesAsync(100, cancellationToken: cancellationToken);
         foreach (var message in messages)
         {
             logger.LogInformation($"Handled messages with content '{message.Body}'");

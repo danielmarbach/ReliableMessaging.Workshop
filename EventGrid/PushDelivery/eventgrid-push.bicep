@@ -1,24 +1,20 @@
 
 param location string = resourceGroup().location
 param namespaceName string = 'ReliableMessagingServiceBus1'
-param topicName string = 'ReliableMessagingServiceBus1Topic'
+param queueName string = 'ReliableMessagingServiceBus1Queue1'
+param topicName string = 'ReliableMessagingServiceBus1Topic1'
 param subscriptionName string = 'ReliableMessagingServiceBus1TopicSubscription'
-param endpointUrl string = 'https://XYZ.ngrok-free.app/api/EventGridEventHandler'
+param endpointUrl string = 'https://xyz.ngrok-free.app/api/EventGridEventHandler'
 
-resource ServiceBus 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' = {
-  sku: {
-    name: 'Premium'
-    tier: 'Premium'
-    capacity: 1
-  }
+resource ServiceBus 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' existing = {
   name: namespaceName
-  location: location
-  tags: {}
+}
+
+resource queue 'Microsoft.ServiceBus/namespaces/queues@2022-10-01-preview' = {
+  parent: ServiceBus
+  name: queueName
   properties: {
-    premiumMessagingPartitions: 1
-    publicNetworkAccess: 'Enabled'
-    disableLocalAuth: false
-    zoneRedundant: true
+    maxSizeInMegabytes: 1024
   }
 }
 
@@ -50,6 +46,15 @@ resource EventGridSubscription 'Microsoft.EventGrid/systemTopics/eventSubscripti
         'Microsoft.ServiceBus.ActiveMessagesAvailableWithNoListeners'
       ]
       enableAdvancedFilteringOnArrays: true
+      advancedFilters: [
+        {
+          values: [
+            queueName
+          ]
+          operatorType: 'StringIn'
+          key: 'data.QueueName'
+        }
+      ]
     }
     eventDeliverySchema: 'CloudEventSchemaV1_0'
     retryPolicy: {
