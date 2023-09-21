@@ -86,3 +86,5 @@ resource Topic 'Microsoft.EventHub/namespaces/schemagroups@2023-01-01-preview' =
 
 #disable-next-line outputs-should-not-contain-secrets
 output eventHubsConnectionString string = listKeys('${EventHubsNamespace.id}/AuthorizationRules/RootManageSharedAccessKey', EventHubsNamespace.apiVersion).primaryConnectionString
+#disable-next-line outputs-should-not-contain-secrets
+output blobStorageConnectionString string = 'DefaultEndpointsProtocol=https;AccountName=${StorageAccount.name};AccountKey=${StorageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
