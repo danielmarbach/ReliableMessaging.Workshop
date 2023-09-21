@@ -1,5 +1,6 @@
 ﻿using Azure.Messaging;
 using Azure.Messaging.EventGrid;
+using Azure.Messaging.EventGrid.Namespaces;
 using Azure.Messaging.EventGrid.SystemEvents;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
