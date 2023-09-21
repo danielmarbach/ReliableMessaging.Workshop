@@ -1,4 +1,5 @@
-﻿using Azure;
+﻿using System.Collections.Concurrent;
+using Azure;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Primitives;
 using Azure.Messaging.EventHubs.Producer;
@@ -8,6 +9,9 @@ var eventHubName = Environment.GetEnvironmentVariable("EVENT_HUB_NAME");
 var eventHubConnectionString = Environment.GetEnvironmentVariable("EVENT_HUB_CONNECTIONSTRING");
 var blobStorageConnectionString = Environment.GetEnvironmentVariable("BLOB_STORAGE_CONNECTIONSTRING");
 var blobContainerName = Environment.GetEnvironmentVariable("BLOB_CONTAINER_NAME");
+const double TemperatureThreshold = 25;
+const int NumberOfDataPointsToObserve = 10;
+var channels = new[] { "EE6AFD051F2F", "C67DB8FC86B6", "E70F6A4594B3", "039B202562A2", "4A7C1E9575D6" };
 var produceData = true;
 var deleteCheckpoint = !produceData;
 
@@ -15,10 +19,13 @@ if (produceData)
 {
     await using var producer = new EventHubProducerClient(eventHubConnectionString, eventHubName);
 
-    await foreach (var batch in StreamBatches(CreateSimulationData(), producer))
+    foreach (var channel in channels)
     {
-        using var batchToSend = batch;
-        await producer.SendAsync(batchToSend);
+        await foreach (var batch in StreamBatches(CreateSimulationData(channel), producer))
+        {
+            using var batchToSend = batch;
+            await producer.SendAsync(batchToSend);
+        }
     }
 }
 
@@ -56,47 +63,40 @@ do
 var checkpointStore = new BlobCheckpointStore(storageClient);
 var maximumBatchSize = 100;
 
-var temperatureThreshold = 25;
-var numberOfDataPointsToObserve = 10;
-var numberOfDataPointsObserved = 0;
+var channelObservations = new ConcurrentDictionary<string, int>();
+
 var processor = new BatchProcessor(checkpointStore, maximumBatchSize, "$Default", eventHubConnectionString, eventHubName);
 processor.ProcessEventAsync += async events =>
 {
     foreach (var @event in events)
     {
         var temperatureChanged = @event.EventBody.ToObjectFromJson<TemperatureChanged>();
-        Console.WriteLine($" - {temperatureChanged.Current} / {temperatureChanged.Published}");
-        if (temperatureChanged.Current > temperatureThreshold)
+        var channel = @event.Properties["Channel"].ToString()!;
+
+        var numberOfDataPointsObserved = channelObservations.AddOrUpdate(channel,
+            static (_, _) => 0,
+            static (_, points, current) => current > TemperatureThreshold ? points + 1 : 0,
+            temperatureChanged.Current);
+
+        if (numberOfDataPointsObserved < NumberOfDataPointsToObserve)
         {
-            numberOfDataPointsObserved++;
+            await Console.Out.WriteLineAsync($" - {channel}: {temperatureChanged.Current} / {temperatureChanged.Published}{(numberOfDataPointsObserved == 0 ? $" (below threshold of '{TemperatureThreshold}', reset)": string.Empty)}");
         }
         else
         {
-            numberOfDataPointsObserved = 0;
+            await Console.Out.WriteLineAsync($" - {channel}: {temperatureChanged.Current} / {temperatureChanged.Published} (above threshold of '{TemperatureThreshold}' for the last '{numberOfDataPointsObserved}' data points)");
         }
-
-        if (numberOfDataPointsObserved < numberOfDataPointsToObserve)
-        {
-            continue;
-        }
-
-        await Console.Out.WriteLineAsync(
-            "==============================================================================");
-        await Console.Out.WriteLineAsync(
-            $"The temperature was above the threshold of {temperatureThreshold} for the last {numberOfDataPointsObserved}");
-        await Console.Out.WriteLineAsync(
-            "==============================================================================");
     }
 };
 
 using var cancellationSource = new CancellationTokenSource();
-cancellationSource.CancelAfter(TimeSpan.FromSeconds(30));
+cancellationSource.CancelAfter(TimeSpan.FromSeconds(60));
 
 await processor.StartProcessingAsync(cancellationSource.Token);
 await Task.Delay(Timeout.Infinite, cancellationSource.Token).ContinueWith(t => t, TaskContinuationOptions.None);
 await processor.StopProcessingAsync();
 
-static Queue<EventData> CreateSimulationData()
+static Queue<EventData> CreateSimulationData(string channel)
 {
     var eventsToSend = new Queue<EventData>();
     var yesterday = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(2));
@@ -110,6 +110,10 @@ static Queue<EventData> CreateSimulationData()
                 Published = yesterday.Add(TimeSpan.FromSeconds(i)),
                 Current = Random.Shared.Next(20, 30) + Random.Shared.NextDouble()
             }),
+            Properties =
+            {
+                { "Channel", channel}
+            }
         };
         eventsToSend.Enqueue(eventData);
     }
@@ -122,8 +126,12 @@ static async IAsyncEnumerable<EventDataBatch> StreamBatches(Queue<EventData> que
     var currentBatch = default(EventDataBatch);
     while (queuedEvents.Count > 0)
     {
-        currentBatch ??= await producer.CreateBatchAsync();
         var eventData = queuedEvents.Peek();
+
+        currentBatch ??= await producer.CreateBatchAsync(new CreateBatchOptions
+        {
+            PartitionKey = eventData.Properties["Channel"].ToString()
+        });
 
         if (!currentBatch.TryAdd(eventData))
         {
