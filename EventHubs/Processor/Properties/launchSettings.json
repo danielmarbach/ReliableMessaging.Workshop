@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Processor": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "EVENT_HUB_NAME": "TBD",
+        "EVENT_HUB_CONNECTIONSTRING": "TBD",
+        "BLOB_STORAGE_CONNECTIONSTRING": "TBD",
+        "BLOB_CONTAINER_NAME": "TBD"
+      }
+    }
+  }
+}
