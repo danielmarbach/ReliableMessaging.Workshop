@@ -1,13 +1,18 @@
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Primitives;
 
-public class BatchProcessor : PluggableCheckpointStoreEventProcessor<EventProcessorPartition>
+namespace Processor;
+
+public sealed class BatchProcessor : PluggableCheckpointStoreEventProcessor<EventProcessorPartition>
 {
+    private readonly ILogger<BatchProcessor> logger;
+
     public BatchProcessor(CheckpointStore checkpointStore,
         int eventBatchMaximumCount,
         string consumerGroup,
         string connectionString,
         string eventHubName,
+        ILogger<BatchProcessor> logger,
         EventProcessorOptions? clientOptions = default)
         : base(
             checkpointStore,
@@ -17,6 +22,7 @@ public class BatchProcessor : PluggableCheckpointStoreEventProcessor<EventProces
             eventHubName,
             clientOptions)
     {
+        this.logger = logger;
     }
 
     public Func<IReadOnlyList<EventData>, Task> ProcessEventAsync { get; set; } = data => Task.CompletedTask;
@@ -29,11 +35,10 @@ public class BatchProcessor : PluggableCheckpointStoreEventProcessor<EventProces
         {
             var readOnlyList = (IReadOnlyList<EventData>)events;
 
-            await Console.Out.WriteLineAsync(
-                $"Received batch of {readOnlyList.Count} event on partition {partition.PartitionId}");
+            logger.LogDebug($"Received batch of {readOnlyList.Count} event on partition {partition.PartitionId}");
 
             await ProcessEventAsync(readOnlyList);
-            
+
             var lastEvent = readOnlyList[^1];
 
             await UpdateCheckpointAsync(
@@ -44,15 +49,16 @@ public class BatchProcessor : PluggableCheckpointStoreEventProcessor<EventProces
         }
         catch (Exception ex)
         {
-            await Console.Error.WriteLineAsync($"Error processing partition '{partition.PartitionId} due to {ex.Message}");
+            logger.LogError($"Error processing partition '{partition.PartitionId} due to {ex.Message}");
         }
     }
 
-    protected override async Task OnProcessingErrorAsync(Exception exception,
+    protected override Task OnProcessingErrorAsync(Exception exception,
         EventProcessorPartition partition,
         string operationDescription,
         CancellationToken cancellationToken)
     {
-        await Console.Error.WriteLineAsync($"Error processing partition '{partition.PartitionId} with '{operationDescription}' due to {exception.Message}");
+        logger.LogError(exception, $"Error processing partition '{partition.PartitionId} with '{operationDescription}' due to {exception.Message}");
+        return Task.CompletedTask;
     }
 }
