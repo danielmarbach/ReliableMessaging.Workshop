@@ -1,14 +1,15 @@
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Producer;
+using Microsoft.Extensions.Options;
 
 namespace Processor;
 
 public class Sender : IHostedService
 {
-    private readonly SenderOptions senderOptions;
+    private readonly IOptions<SenderOptions> senderOptions;
     private readonly EventHubProducerClient eventHubProducerClient;
 
-    public Sender(SenderOptions senderOptions, EventHubProducerClient eventHubProducerClient)
+    public Sender(IOptions<SenderOptions> senderOptions, EventHubProducerClient eventHubProducerClient)
     {
         this.senderOptions = senderOptions;
         this.eventHubProducerClient = eventHubProducerClient;
@@ -16,15 +17,15 @@ public class Sender : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        if (!senderOptions.ProduceData)
+        if (!senderOptions.Value.ProduceData)
         {
             return;
         }
 
-        foreach (var channel in senderOptions.Channels)
+        foreach (var channel in senderOptions.Value.Channels)
         {
             await foreach (var batch in StreamBatches(
-                                   CreateSimulationData(channel, senderOptions.NumberOfDatapointPerChannel),
+                                   CreateSimulationData(channel, senderOptions.Value.NumberOfDatapointPerChannel),
                                    eventHubProducerClient)
                                .WithCancellation(cancellationToken))
             {

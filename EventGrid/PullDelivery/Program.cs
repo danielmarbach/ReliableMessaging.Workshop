@@ -1,6 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Azure;
+﻿using Azure;
 using Microsoft.Extensions.Azure;
 using PullDelivery;
 

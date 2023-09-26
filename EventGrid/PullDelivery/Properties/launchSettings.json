@@ -2,11 +2,7 @@
   "profiles": {
     "PullDelivery": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
-      "environmentVariables": {
-        "TOPIC_ACCESS_KEY": "TBD",
-        "TOPIC_ENDPOINT": "TBD"
-      }
+      "dotnetRunMessages": true
     }
   }
 }

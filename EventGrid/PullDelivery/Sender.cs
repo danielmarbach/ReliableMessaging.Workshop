@@ -1,5 +1,6 @@
 using Azure.Messaging;
 using Azure.Messaging.EventGrid.Namespaces;
+using Microsoft.Extensions.Options;
 
 namespace PullDelivery;
 
@@ -8,10 +9,10 @@ public class Sender : IHostedService
     private readonly EventGridClient eventGridClient;
     private readonly string topicName;
 
-    public Sender(EventGridClient eventGridClient, EventGridOptions eventGridOptions)
+    public Sender(EventGridClient eventGridClient, IOptions<EventGridOptions> eventGridOptions)
     {
         this.eventGridClient = eventGridClient;
-        topicName = eventGridOptions.TopicName;
+        topicName = eventGridOptions.Value.TopicName;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)

@@ -1,6 +1,7 @@
 using Azure;
 using Azure.Core.Serialization;
 using Azure.Messaging.EventGrid.Namespaces;
+using Microsoft.Extensions.Options;
 
 namespace PullDelivery;
 
@@ -11,12 +12,12 @@ public class Receiver : BackgroundService
     private readonly string subscriptionName;
     private readonly string topicName;
 
-    public Receiver(EventGridClient eventGridClient, ILogger<Receiver> logger, EventGridOptions eventGridOptions)
+    public Receiver(EventGridClient eventGridClient, ILogger<Receiver> logger, IOptions<EventGridOptions> eventGridOptions)
     {
         this.eventGridClient = eventGridClient;
         this.logger = logger;
-        topicName = eventGridOptions.TopicName;
-        subscriptionName = eventGridOptions.SubscriptionName;
+        topicName = eventGridOptions.Value.TopicName;
+        subscriptionName = eventGridOptions.Value.SubscriptionName;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
