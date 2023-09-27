@@ -35,10 +35,10 @@ public class Sender : IHostedService
         }
     }
 
-    private static Queue<SubmitOrder> CreateSimulationCommands()
+    private Queue<SubmitOrder> CreateSimulationCommands()
     {
         var eventsToSend = new Queue<SubmitOrder>();
-        for (var i = 0; i < 100; i++)
+        for (var i = 0; i < serviceBusOptions.Value.NumberOfCommands; i++)
         {
             var submitOrder = new SubmitOrder
             {

@@ -48,7 +48,7 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
     Task HandleOrderAccepted(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
         var orderAccepted = Interlocked.Increment(ref orderAcceptedCounter);
-        logger.LogInformation($"#{orderAccepted} have been accepted");
+        logger.Log(orderAccepted < serviceBusOptions.Value.NumberOfCommands ? LogLevel.Information : LogLevel.Warning, $"#{orderAccepted} have been accepted");
         return Task.CompletedTask;
     }
 
