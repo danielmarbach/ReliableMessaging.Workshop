@@ -9,12 +9,12 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
     private readonly ServiceBusClient serviceBusClient;
     private readonly IOptions<ServiceBusOptions> serviceBusOptions;
     private readonly ILogger<Sender> logger;
-    private ServiceBusProcessor queueProcessor;
+    private ServiceBusProcessor? queueProcessor;
     private long orderAcceptedCounter = 0;
 
     public DestinationProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
     {
-        this.serviceBusClient = clientFactory.CreateClient("Client");
+        serviceBusClient = clientFactory.CreateClient("Client");
         this.serviceBusOptions = serviceBusOptions;
         this.logger = logger;
     }
@@ -48,7 +48,7 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
     Task HandleOrderAccepted(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
         var orderAccepted = Interlocked.Increment(ref orderAcceptedCounter);
-        logger.Log(orderAccepted < serviceBusOptions.Value.NumberOfCommands ? LogLevel.Information : LogLevel.Warning, $"#{orderAccepted} have been accepted");
+        logger.OrderAccepted(orderAccepted < serviceBusOptions.Value.NumberOfCommands ? LogLevel.Information : LogLevel.Warning, orderAccepted);
         return Task.CompletedTask;
     }
 
@@ -64,11 +64,17 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
     
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        await queueProcessor.StopProcessingAsync(cancellationToken);
+        if (queueProcessor is not null)
+        {
+            await queueProcessor.StopProcessingAsync(cancellationToken);
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
-        await queueProcessor.DisposeAsync();
+        if (queueProcessor is not null)
+        {
+            await queueProcessor.DisposeAsync();
+        }
     }
 }

@@ -2,5 +2,5 @@ namespace Processor;
 
 public record SubmitOrder
 {
-    public string OrderId { get; set; }
+    public required string OrderId { get; set; }
 }

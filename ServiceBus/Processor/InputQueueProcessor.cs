@@ -10,7 +10,7 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
     private readonly ServiceBusClient serviceBusClient;
     private readonly IOptions<ServiceBusOptions> serviceBusOptions;
     private readonly ILogger<Sender> logger;
-    private ServiceBusProcessor queueProcessor;
+    private ServiceBusProcessor? queueProcessor;
 
     public InputQueueProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
     {
@@ -91,7 +91,7 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
         var submitOrder = message.Body.ToObjectFromJson<SubmitOrder>();
-        logger.LogInformation($"SubmitOrder command for ID {submitOrder.OrderId} received");
+        logger.SubmitOrderReceived(submitOrder.OrderId);
 
         try
         {
@@ -118,18 +118,24 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
         }
         catch (OperationCanceledException e)
         {
-            logger.LogError(e, $"Lost the lock while processing ID {submitOrder.OrderId}");
+            logger.SubmitOrderLockLost(e, submitOrder.OrderId);
             throw;
         }
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        await queueProcessor.StopProcessingAsync(cancellationToken);
+        if (queueProcessor is not null)
+        {
+            await queueProcessor.StopProcessingAsync(cancellationToken);
+        }
     }
 
     public async ValueTask DisposeAsync()
     {
-        await queueProcessor.DisposeAsync();
+        if (queueProcessor is not null)
+        {
+            await queueProcessor.DisposeAsync();
+        }
     }
 }
