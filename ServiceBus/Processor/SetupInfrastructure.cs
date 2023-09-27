@@ -42,6 +42,32 @@ public class SetupInfrastructure : IHostedService
 
         await administrationClient.CreateTopicAsync(new CreateTopicOptions(serviceBusOptions.Value.TopicName),
             cancellationToken);
+
+        var subscriptionName = $"{serviceBusOptions.Value.DestinationQueue}Subscription";
+        if (await administrationClient.SubscriptionExistsAsync(serviceBusOptions.Value.TopicName,
+                subscriptionName, cancellationToken))
+        {
+            await administrationClient.DeleteSubscriptionAsync(serviceBusOptions.Value.TopicName, subscriptionName, cancellationToken);
+        }
+
+        await administrationClient.CreateSubscriptionAsync(
+            new CreateSubscriptionOptions(serviceBusOptions.Value.TopicName, subscriptionName)
+            {
+                ForwardTo = serviceBusOptions.Value.DestinationQueue
+            }, cancellationToken);
+
+        await administrationClient.CreateRuleAsync(serviceBusOptions.Value.TopicName, subscriptionName,
+            new CreateRuleOptions
+            {
+                Name = "OrderAccepted",
+                Filter = new CorrelationRuleFilter
+                {
+                    ApplicationProperties =
+                    {
+                        { "MessageType", typeof(OrderAccepted).FullName }
+                    }
+                }
+            }, cancellationToken);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

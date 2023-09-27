@@ -4,8 +4,11 @@ using Processor;
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddAzureClients(azureClientBuilder =>
 {
-    azureClientBuilder.AddServiceBusClient(builder.Configuration.GetSection("ServiceBusOptions")["ConnectionStringNoManageRights"]).ConfigureOptions(
-        options =>
+    azureClientBuilder.AddServiceBusClient(builder.Configuration.GetSection("ServiceBusOptions")["ConnectionStringNoManageRights"])
+        .WithName("Client");
+    azureClientBuilder.AddServiceBusClient(builder.Configuration.GetSection("ServiceBusOptions")["ConnectionStringNoManageRights"])
+        .WithName("TransactionalClient")
+        .ConfigureOptions(options =>
         {
             options.EnableCrossEntityTransactions = true;
         });
@@ -15,7 +18,8 @@ builder.Services.Configure<ServiceBusOptions>(builder.Configuration.GetSection(n
 
 builder.Services.AddHostedService<SetupInfrastructure>();
 builder.Services.AddHostedService<Sender>();
-builder.Services.AddHostedService<Processor.Processor>();
+builder.Services.AddHostedService<InputQueueProcessor>();
+builder.Services.AddHostedService<DestinationProcessor>();
 
 var host = builder.Build();
 await host.RunAsync();

@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 
 namespace Processor;
@@ -10,9 +11,9 @@ public class Sender : IHostedService
     private readonly IOptions<ServiceBusOptions> serviceBusOptions;
     private readonly ILogger<Sender> logger;
 
-    public Sender(ServiceBusClient serviceBusClient, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
+    public Sender(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
     {
-        this.serviceBusClient = serviceBusClient;
+        serviceBusClient = clientFactory.CreateClient("Client");
         this.serviceBusOptions = serviceBusOptions;
         this.logger = logger;
     }
