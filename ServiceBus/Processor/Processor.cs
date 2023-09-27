@@ -1,3 +1,4 @@
+using System.Transactions;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Options;
 
@@ -80,12 +81,39 @@ public class Processor : IHostedService, IAsyncDisposable
 
     async Task HandleSubmitOrder(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
+        await using var publisher = serviceBusClient.CreateSender(serviceBusOptions.Value.TopicName, new ServiceBusSenderOptions
+        {
+            Identifier = $"Publisher-{serviceBusOptions.Value.TopicName}"
+        });
+
+        // will make sure operations will enlist
+        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
         var submitOrder = message.Body.ToObjectFromJson<SubmitOrder>();
         logger.LogInformation($"SubmitOrder command for ID {submitOrder.OrderId} received");
 
         try
         {
+            var orderAccepted = new OrderAccepted
+            {
+                OrderId = submitOrder.OrderId
+            };
+            var orderAcceptedMessage = new ServiceBusMessage(BinaryData.FromObjectAsJson(orderAccepted))
+            {
+                ContentType = "application/json",
+                CorrelationId = message.MessageId,
+                ApplicationProperties =
+                {
+                    { "MessageType", typeof(OrderAccepted).FullName }
+                }
+            };
+            
+            // the order here doesn't matter because the message will only go out if the rest was successful
+            await publisher.SendMessageAsync(orderAcceptedMessage, cancellationToken);
+
             await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(1, 15)), cancellationToken);
+            
+            scope.Complete();
         }
         catch (OperationCanceledException e)
         {

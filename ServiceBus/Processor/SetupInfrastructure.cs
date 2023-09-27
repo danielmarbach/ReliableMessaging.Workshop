@@ -27,6 +27,21 @@ public class SetupInfrastructure : IHostedService
             RequiresDuplicateDetection = true,
             DuplicateDetectionHistoryTimeWindow = TimeSpan.FromMinutes(1)
         }, cancellationToken);
+        
+        if (await administrationClient.QueueExistsAsync(serviceBusOptions.Value.DestinationQueue, cancellationToken))
+        {
+            await administrationClient.DeleteQueueAsync(serviceBusOptions.Value.DestinationQueue, cancellationToken);
+        }
+        
+        await administrationClient.CreateQueueAsync(new CreateQueueOptions(serviceBusOptions.Value.DestinationQueue), cancellationToken);
+        
+        if (await administrationClient.TopicExistsAsync(serviceBusOptions.Value.TopicName, cancellationToken))
+        {
+            await administrationClient.DeleteQueueAsync(serviceBusOptions.Value.TopicName, cancellationToken);
+        }
+
+        await administrationClient.CreateTopicAsync(new CreateTopicOptions(serviceBusOptions.Value.TopicName),
+            cancellationToken);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
