@@ -26,7 +26,7 @@ public class Sender : IHostedService
         });
 
         var simulationCommands = CreateSimulationCommands();
-        logger.LogInformation($"Sending {simulationCommands.Count} commands with duplicates {simulationCommands.Count - simulationCommands.DistinctBy(c => c.OrderId, StringComparer.Ordinal).Count()}");
+        logger.SendWithDuplicates(simulationCommands.Count, simulationCommands.Count - simulationCommands.DistinctBy(c => c.OrderId, StringComparer.Ordinal).Count());
 
         await foreach (var batch in Batches(simulationCommands, commandSender, cancellationToken))
         {
