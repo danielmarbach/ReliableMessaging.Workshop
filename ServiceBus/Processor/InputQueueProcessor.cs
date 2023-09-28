@@ -11,6 +11,7 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
     private readonly IOptions<ServiceBusOptions> serviceBusOptions;
     private readonly ILogger<Sender> logger;
     private ServiceBusProcessor? queueProcessor;
+    private ServiceBusSender? publisher;
 
     public InputQueueProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
     {
@@ -31,6 +32,11 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
         });
         queueProcessor.ProcessMessageAsync += ProcessMessages;
         queueProcessor.ProcessErrorAsync += ProcessError;
+        publisher = serviceBusClient.CreateSender(serviceBusOptions.Value.TopicName, new ServiceBusSenderOptions
+        {
+            Identifier = $"Publisher-{serviceBusOptions.Value.TopicName}"
+        });
+
         await queueProcessor.StartProcessingAsync(cancellationToken);
     }
 
@@ -83,11 +89,6 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
 
     async Task HandleSubmitOrder(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
-        await using var publisher = serviceBusClient.CreateSender(serviceBusOptions.Value.TopicName, new ServiceBusSenderOptions
-        {
-            Identifier = $"Publisher-{serviceBusOptions.Value.TopicName}"
-        });
-
         // will make sure operations will enlist
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -143,6 +144,11 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
         if (queueProcessor is not null)
         {
             await queueProcessor.DisposeAsync();
+        }
+
+        if (publisher is not null)
+        {
+            await publisher.DisposeAsync();
         }
     }
 }
