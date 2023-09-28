@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SessionProcessor": {
+      "commandName": "Project",
+      "dotnetRunMessages": true
+    }
+  }
+}

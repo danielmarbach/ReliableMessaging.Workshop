@@ -3,7 +3,7 @@ using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 
-namespace Processor;
+namespace SessionProcessor;
 
 public class Sender : IHostedService
 {
@@ -25,38 +25,35 @@ public class Sender : IHostedService
             Identifier = $"CommandSender-{serviceBusOptions.Value.InputQueue}"
         });
 
-        var simulationCommands = CreateSimulationCommands();
-        logger.SendWithDuplicates(simulationCommands.Count, simulationCommands.Count - simulationCommands.DistinctBy(c => c.OrderId, StringComparer.Ordinal).Count());
-
-        await foreach (var batch in Batches(simulationCommands, commandSender, cancellationToken))
+        foreach (var channel in serviceBusOptions.Value.Channels)
         {
-            using var batchToSend = batch;
-            await commandSender.SendMessagesAsync(batchToSend, cancellationToken);
+            var simulationCommands = CreateSimulationCommands();
+            await foreach (var batch in Batches(channel, simulationCommands, commandSender, cancellationToken))
+            {
+                using var batchToSend = batch;
+                await commandSender.SendMessagesAsync(batchToSend, cancellationToken);
+            }
         }
     }
 
-    private Queue<SubmitOrder> CreateSimulationCommands()
+    private Queue<ProcessTemperatureChange> CreateSimulationCommands()
     {
-        var eventsToSend = new Queue<SubmitOrder>();
-        for (var i = 0; i < serviceBusOptions.Value.NumberOfCommands; i++)
+        var eventsToSend = new Queue<ProcessTemperatureChange>();
+        var yesterday = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(2));
+        for (var i = 0; i < serviceBusOptions.Value.NumberOfCommandsPerChannel; i++)
         {
-            var submitOrder = new SubmitOrder
+            var processTemperatureChange = new ProcessTemperatureChange
             {
-                OrderId = $"orders/{Guid.NewGuid()}"
+                Published = yesterday.Add(TimeSpan.FromSeconds(i)),
+                Current = Random.Shared.Next(20, 30) + Random.Shared.NextDouble()
             };
-            eventsToSend.Enqueue(submitOrder);
-
-            // create some duplicates
-            if (i % 3 == 0)
-            {
-                eventsToSend.Enqueue(submitOrder);
-            }
+            eventsToSend.Enqueue(processTemperatureChange);
         }
 
         return eventsToSend;
     }
 
-    static async IAsyncEnumerable<ServiceBusMessageBatch> Batches(Queue<SubmitOrder> queueCommands,
+    static async IAsyncEnumerable<ServiceBusMessageBatch> Batches(string channel, Queue<ProcessTemperatureChange> queueCommands,
         ServiceBusSender sender, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var currentBatch = default(ServiceBusMessageBatch);
@@ -69,11 +66,11 @@ public class Sender : IHostedService
             if (!currentBatch.TryAddMessage(new ServiceBusMessage(BinaryData.FromObjectAsJson(command))
                 {
                     ContentType = "application/json",
-                    MessageId = command.OrderId,
                     ApplicationProperties =
                     {
-                        { "MessageType", typeof(SubmitOrder).FullName }
-                    }
+                        { "MessageType", typeof(ProcessTemperatureChange).FullName }
+                    },
+                    SessionId = channel
                 }))
             {
                 if (currentBatch.Count == 0)
