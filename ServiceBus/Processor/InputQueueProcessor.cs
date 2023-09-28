@@ -55,6 +55,7 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
             var handlerTask = messageTypeValue switch
             {
                 "Processor.SubmitOrder" => HandleSubmitOrder(arg.Message, cts.Token),
+                "Processor.OrderAccepted" => HandleOrderAccepted(arg.Message, cts.Token),
                 _ => Task.CompletedTask
             };
             await handlerTask;
@@ -108,12 +109,12 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
                     { "MessageType", typeof(OrderAccepted).FullName }
                 }
             };
-            
+
             // the order here doesn't matter because the message will only go out if the rest was successful
             await publisher.SendMessageAsync(orderAcceptedMessage, cancellationToken);
 
             await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(1, 15)), cancellationToken);
-            
+
             scope.Complete();
         }
         catch (OperationCanceledException e)
@@ -121,6 +122,12 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
             logger.SubmitOrderLockLost(e, submitOrder.OrderId);
             throw;
         }
+    }
+
+    Task HandleOrderAccepted(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
+    {
+        logger.OrderAcceptedWithSubject(message.Subject);
+        return Task.CompletedTask;
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

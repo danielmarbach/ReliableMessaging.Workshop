@@ -27,14 +27,14 @@ public class SetupInfrastructure : IHostedService
             RequiresDuplicateDetection = true,
             DuplicateDetectionHistoryTimeWindow = TimeSpan.FromMinutes(1)
         }, cancellationToken);
-        
+
         if (await administrationClient.QueueExistsAsync(serviceBusOptions.Value.DestinationQueue, cancellationToken))
         {
             await administrationClient.DeleteQueueAsync(serviceBusOptions.Value.DestinationQueue, cancellationToken);
         }
-        
+
         await administrationClient.CreateQueueAsync(new CreateQueueOptions(serviceBusOptions.Value.DestinationQueue), cancellationToken);
-        
+
         if (await administrationClient.TopicExistsAsync(serviceBusOptions.Value.TopicName, cancellationToken))
         {
             await administrationClient.DeleteQueueAsync(serviceBusOptions.Value.TopicName, cancellationToken);
@@ -43,20 +43,23 @@ public class SetupInfrastructure : IHostedService
         await administrationClient.CreateTopicAsync(new CreateTopicOptions(serviceBusOptions.Value.TopicName),
             cancellationToken);
 
-        var subscriptionName = $"{serviceBusOptions.Value.DestinationQueue}Subscription";
+        var destinationSubscriptionName = $"{serviceBusOptions.Value.DestinationQueue}Subscription";
         if (await administrationClient.SubscriptionExistsAsync(serviceBusOptions.Value.TopicName,
-                subscriptionName, cancellationToken))
+                destinationSubscriptionName, cancellationToken))
         {
-            await administrationClient.DeleteSubscriptionAsync(serviceBusOptions.Value.TopicName, subscriptionName, cancellationToken);
+            await administrationClient.DeleteSubscriptionAsync(serviceBusOptions.Value.TopicName, destinationSubscriptionName, cancellationToken);
         }
 
         await administrationClient.CreateSubscriptionAsync(
-            new CreateSubscriptionOptions(serviceBusOptions.Value.TopicName, subscriptionName)
+            new CreateSubscriptionOptions(serviceBusOptions.Value.TopicName, destinationSubscriptionName)
             {
                 ForwardTo = serviceBusOptions.Value.DestinationQueue
             }, cancellationToken);
 
-        await administrationClient.CreateRuleAsync(serviceBusOptions.Value.TopicName, subscriptionName,
+        await administrationClient.DeleteRuleAsync(serviceBusOptions.Value.TopicName, destinationSubscriptionName,
+            "$Default", cancellationToken);
+
+        await administrationClient.CreateRuleAsync(serviceBusOptions.Value.TopicName, destinationSubscriptionName,
             new CreateRuleOptions
             {
                 Name = "OrderAccepted",
@@ -67,6 +70,30 @@ public class SetupInfrastructure : IHostedService
                         { "MessageType", typeof(OrderAccepted).FullName }
                     }
                 }
+            }, cancellationToken);
+
+        var inputQueueSubscriptionName = $"{serviceBusOptions.Value.InputQueue}Subscription";
+        if (await administrationClient.SubscriptionExistsAsync(serviceBusOptions.Value.TopicName,
+                inputQueueSubscriptionName, cancellationToken))
+        {
+            await administrationClient.DeleteSubscriptionAsync(serviceBusOptions.Value.TopicName, inputQueueSubscriptionName, cancellationToken);
+        }
+
+        await administrationClient.CreateSubscriptionAsync(
+            new CreateSubscriptionOptions(serviceBusOptions.Value.TopicName, inputQueueSubscriptionName)
+            {
+                ForwardTo = serviceBusOptions.Value.InputQueue
+            }, cancellationToken);
+
+        await administrationClient.DeleteRuleAsync(serviceBusOptions.Value.TopicName, inputQueueSubscriptionName,
+            "$Default", cancellationToken);
+
+        await administrationClient.CreateRuleAsync(serviceBusOptions.Value.TopicName, inputQueueSubscriptionName,
+            new CreateRuleOptions
+            {
+                Name = "AllEventsPublishedUnderNamespace",
+                Action = new SqlRuleAction("SET sys.Label = 'Own'"),
+                Filter = new SqlRuleFilter("user.MessageType LIKE 'Processor.%'")
             }, cancellationToken);
     }
 

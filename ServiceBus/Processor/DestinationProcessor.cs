@@ -18,7 +18,7 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
         this.serviceBusOptions = serviceBusOptions;
         this.logger = logger;
     }
-    
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         queueProcessor = serviceBusClient.CreateProcessor(serviceBusOptions.Value.DestinationQueue, new ServiceBusProcessorOptions
@@ -44,11 +44,11 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
         };
         await handlerTask;
     }
-    
+
     Task HandleOrderAccepted(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
         var orderAccepted = Interlocked.Increment(ref orderAcceptedCounter);
-        logger.OrderAccepted(orderAccepted < serviceBusOptions.Value.NumberOfCommands ? LogLevel.Information : LogLevel.Warning, orderAccepted);
+        logger.OrderAccepted(orderAccepted <= serviceBusOptions.Value.NumberOfCommands ? LogLevel.Information : LogLevel.Warning, orderAccepted);
         return Task.CompletedTask;
     }
 
@@ -61,7 +61,7 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
         logger.LogError(arg.Exception, "Error processing message");
         return Task.CompletedTask;
     }
-    
+
     public async Task StopAsync(CancellationToken cancellationToken)
     {
         if (queueProcessor is not null)
