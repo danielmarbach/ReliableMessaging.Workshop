@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
@@ -15,8 +16,8 @@ public class Receiver : IHostedService
     private ConditionalWeakTable<CancellationTokenSource, UpdateReceipt> sourceToPopReceipt = new();
     private CancellationTokenSource cancellationTokenSource;
     private QueueClient receiver;
-    private TimeSpan visibilityTimeout = TimeSpan.FromSeconds(10);
-    private TimeSpan workTime = TimeSpan.FromSeconds(12);
+    private readonly TimeSpan visibilityTimeout = TimeSpan.FromSeconds(10);
+    private readonly TimeSpan workTime = TimeSpan.FromSeconds(12);
 
     public Receiver(QueueServiceClient queueServiceClient, IConfiguration configuration, ILogger<Receiver> logger)
     {
@@ -25,6 +26,7 @@ public class Receiver : IHostedService
         this.logger = logger;
     }
 
+    [MemberNotNull(nameof(receiver), nameof(cancellationTokenSource))]
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         receiver = queueServiceClient.GetQueueClient(configuration.GetSection("Storage")["QueueName"]);
@@ -32,7 +34,7 @@ public class Receiver : IHostedService
 
         cancellationTokenSource = new CancellationTokenSource();
 
-        _ = Task.Run(() => ReceiveMessages(cancellationTokenSource.Token));
+        _ = Task.Run(() => ReceiveMessages(cancellationTokenSource.Token), CancellationToken.None);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
@@ -87,7 +89,7 @@ public class Receiver : IHostedService
         {
             var envelop = message.Body.ToObjectFromJson<Envelop<Message>>(StorageJsonContext.Default.Options);
 
-            logger.LogInformation($"Start handling message '{message.MessageId}' with '{envelop.Content.SomeValue}'");
+            logger.StartHandling(message.MessageId, envelop.Content.SomeValue);
 
             // Simulate some work
             await Task.Delay(workTime, cancellationToken);
@@ -99,7 +101,7 @@ public class Receiver : IHostedService
 
             await receiver.DeleteMessageAsync(message.MessageId, message.PopReceipt, CancellationToken.None);
 
-            logger.LogInformation($"Done handling message '{message.MessageId}' with '{envelop.Content.SomeValue}'");
+            logger.DoneHandling(message.MessageId, envelop.Content.SomeValue);
         }
         catch (OperationCanceledException)
         {
@@ -132,12 +134,11 @@ public class Receiver : IHostedService
                 message = message.Update(updateReceipt);
                 sourceToPopReceipt.AddOrUpdate(coordinationTokenSource, updateReceipt);
 
-                logger.LogInformation(
-                    $"Lease renewed {message.MessageId} original '{message.PopReceipt}' and new '{updateReceipt.PopReceipt}'");
+                logger.LeaseRenewed(message.MessageId, message.PopReceipt, updateReceipt.PopReceipt);
             }
             catch (OperationCanceledException)
             {
-                logger.LogInformation($"Lease renewal {message.MessageId} stopped");
+                logger.LeaseRenewalStopped(message.MessageId);
                 return;
             }
             catch(Exception ex)
