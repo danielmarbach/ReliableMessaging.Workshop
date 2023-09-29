@@ -4,17 +4,12 @@ namespace PushDelivery;
 
 public class Queue
 {
-    private readonly Channel<FetchMessagesFromQueue> channel;
-
-    public Queue()
+    private readonly Channel<FetchMessagesFromQueue> channel = Channel.CreateUnbounded<FetchMessagesFromQueue>(new UnboundedChannelOptions
     {
-        channel = Channel.CreateUnbounded<FetchMessagesFromQueue>(new UnboundedChannelOptions
-        {
-            SingleReader = true,
-            SingleWriter = false,
-            AllowSynchronousContinuations = true
-        });
-    }
+        SingleReader = true,
+        SingleWriter = false,
+        AllowSynchronousContinuations = true
+    });
 
     public async ValueTask Enqueue(FetchMessagesFromQueue fetchMessages)
     {

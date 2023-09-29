@@ -41,7 +41,7 @@ public class ServiceBusBackgroundWorker : BackgroundService
         var messages = await receiver.ReceiveMessagesAsync(100, cancellationToken: cancellationToken);
         foreach (var message in messages)
         {
-            logger.LogInformation($"Handled messages with content '{message.Body}'");
+            logger.HandledMessage(message.Body.ToString());
         }
 
         logger.LogInformation("Stopping processing");

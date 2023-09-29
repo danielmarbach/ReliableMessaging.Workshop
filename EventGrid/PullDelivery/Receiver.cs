@@ -36,7 +36,7 @@ public class Receiver : BackgroundService
                 case "ChannelA" when
                     await @event.Data!.ToObjectAsync<TemperatureChanged>(JsonObjectSerializer.Default, cancellationToken: stoppingToken) is { Current: > 25 } warm:
                     toRelease.Add(brokerProperties.LockToken);
-                    logger.LogInformation($" - {warm.Current} / {warm.Published}");
+                    logger.TemperatureChanged(warm.Current, warm.Published);
                     break;
                 case "ChannelA":
                     toAcknowledge.Add(brokerProperties.LockToken);
@@ -49,21 +49,21 @@ public class Receiver : BackgroundService
 
         if (toRelease.Count > 0)
         {
-            logger.LogInformation($"Releasing {toRelease.Count}");
+            logger.Releasing(toRelease.Count);
             // ignoring the result because it is a demo
             _ = await eventGridClient.ReleaseCloudEventsAsync(topicName, subscriptionName, toRelease, stoppingToken);
         }
 
         if (toAcknowledge.Count > 0)
         {
-            logger.LogInformation($"Acknowledge {toAcknowledge.Count}");
+            logger.Acknowledge(toRelease.Count);
             // ignoring the result because it is a demo
             _ = await eventGridClient.AcknowledgeCloudEventsAsync(topicName, subscriptionName, toRelease, stoppingToken);
         }
 
         if (toReject.Count > 0)
         {
-            logger.LogInformation($"Reject {toReject.Count}");
+            logger.Reject(toRelease.Count);
             // ignoring the result because it is a demo
             _ = await eventGridClient.RejectCloudEventsAsync(topicName, subscriptionName, toRelease, stoppingToken);
         }
