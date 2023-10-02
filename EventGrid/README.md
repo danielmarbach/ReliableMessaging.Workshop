@@ -6,6 +6,10 @@
 
 Address all `// TODO` in the code.
 
+Bonus exercise:
+
+Could you implement a simple task queue with Event Grid Pull that operates similar to Azure Storage Queues? Think about the design implications, challenges etc. and discuss it with one of your peers.
+
 
 ### Push Delivery (Simple)
 
