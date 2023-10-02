@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PullDelivery", "PullDeliver
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PushDelivery", "PushDelivery\PushDelivery.csproj", "{61AA1A75-1459-4851-9F98-A77D2A777081}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PushDeliverySimple", "PushDeliverySimple\PushDeliverySimple.csproj", "{069773D3-896F-44A3-8C84-A85CB49F04B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{61AA1A75-1459-4851-9F98-A77D2A777081}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61AA1A75-1459-4851-9F98-A77D2A777081}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61AA1A75-1459-4851-9F98-A77D2A777081}.Release|Any CPU.Build.0 = Release|Any CPU
+		{069773D3-896F-44A3-8C84-A85CB49F04B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{069773D3-896F-44A3-8C84-A85CB49F04B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{069773D3-896F-44A3-8C84-A85CB49F04B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{069773D3-896F-44A3-8C84-A85CB49F04B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
