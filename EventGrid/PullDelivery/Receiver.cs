@@ -56,16 +56,16 @@ public class Receiver : BackgroundService
 
         if (toAcknowledge.Count > 0)
         {
-            logger.Acknowledge(toRelease.Count);
+            logger.Acknowledge(toAcknowledge.Count);
             // ignoring the result because it is a demo
-            _ = await eventGridClient.AcknowledgeCloudEventsAsync(topicName, subscriptionName, toRelease, stoppingToken);
+            _ = await eventGridClient.AcknowledgeCloudEventsAsync(topicName, subscriptionName, toAcknowledge, stoppingToken);
         }
 
         if (toReject.Count > 0)
         {
-            logger.Reject(toRelease.Count);
+            logger.Reject(toReject.Count);
             // ignoring the result because it is a demo
-            _ = await eventGridClient.RejectCloudEventsAsync(topicName, subscriptionName, toRelease, stoppingToken);
+            _ = await eventGridClient.RejectCloudEventsAsync(topicName, subscriptionName, toReject, stoppingToken);
         }
     }
 }
