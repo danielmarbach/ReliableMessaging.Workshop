@@ -2,6 +2,11 @@
 
 ## Exercises
 
+### Pull Delivery (Simple)
+
+Address all `// TODO` in the code.
+
+
 ### Push Delivery (Simple)
 
 Address all `// TODO` in the code.
@@ -15,6 +20,15 @@ Change the Azure Service Bus processor to have a failure rate that moves a certa
 ## Solutions
 
 ### Pull Delivery
+
+#### Prerequisites
+
+1. A fully deployed Event Grid namespace (use `eventgrid-pull.bicep` to deploy it) (adjust the necessary parameters or [create a parameter file](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files))
+1. Add the access key and the endpoint URL from the output to `appsettings.json` in the `EventGridOptions` section
+
+#### Running it
+
+`dotnet run -c Release`
 
 ### Push Delivery
 
@@ -30,7 +44,7 @@ The sample/solution shows how to leverage Event Grid notifications delivered ove
 
 #### Running it
 
-1. Make sure the endpoint is running before deploying!
+1. Make sure the endpoint is running before deploying! `dotnet run -c Release`
 1. Log into ngrok in the CLI
 1. Setup ngrok "tunneling" with `ngrok http --domain=customdomain.ngrok-free.app 8080 --host-header=rewrite` (assuming the solution runs on port 8080 locally, replace `customdomain` with your custom domain)
 1. Use `eventgrid-push.bicep` to deploy (adjust the necessary parameters or [create a parameter file](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files)). Make sure to at least replace the ngrok `endpointUrl`

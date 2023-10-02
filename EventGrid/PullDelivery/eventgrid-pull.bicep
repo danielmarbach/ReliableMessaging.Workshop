@@ -1,4 +1,3 @@
-@description('Specifies the location for resources.')
 param location string = resourceGroup().location
 param namespaceName string = 'EventGridNamespace1'
 param subscriptionName string = 'TemperatureChangedSubscription'
@@ -53,7 +52,8 @@ resource EventGridSubscription 'Microsoft.EventGrid/namespaces/topics/eventSubsc
   name: subscriptionName
 }
 
-var eventGridConnectionString = EventGridNamespace.listKeys().key1
+var eventGridAccessKey = EventGridNamespace.listKeys().key1
 
-output eventGridConnectionString string = eventGridConnectionString
+output eventGridAccessKey string = eventGridAccessKey
 output eventGridName string = EventGridNamespace.name
+output eventGridHostName string = 'https://${EventGridNamespace.properties.topicsConfiguration.hostname}'

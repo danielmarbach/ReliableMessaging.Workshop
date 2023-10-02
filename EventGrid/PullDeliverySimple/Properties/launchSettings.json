@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PullDeliverySimple": {
+      "commandName": "Project",
+      "dotnetRunMessages": true
+    }
+  }
+}
