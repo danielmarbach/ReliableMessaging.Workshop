@@ -1,7 +1,7 @@
 
 param location string = resourceGroup().location
-param eventHubName string = 'reliablemessagingeventhubs2'
-param topicName string = 'topic1'
+param eventHubNamespaceName string = 'reliablemessagingeventhubs2'
+param eventHubName string = 'topic1'
 param blobStorageName string = 'reliablecheckpoints'
 
 resource StorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
@@ -25,7 +25,7 @@ resource StorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   }
 }
 
-resource symbolicname 'Microsoft.Storage/storageAccounts/blobServices@2022-09-01' = {
+resource BlobService 'Microsoft.Storage/storageAccounts/blobServices@2022-09-01' = {
   name: 'default'
   parent: StorageAccount
   properties: {
@@ -46,7 +46,7 @@ resource EventHubsNamespace 'Microsoft.EventHub/namespaces@2023-01-01-preview' =
     tier: 'Standard'
     capacity: 1
   }
-  name: eventHubName
+  name: eventHubNamespaceName
   location: location
   tags: {}
   properties: {
@@ -59,9 +59,9 @@ resource EventHubsNamespace 'Microsoft.EventHub/namespaces@2023-01-01-preview' =
   }
 }
 
-resource topic 'Microsoft.EventHub/namespaces/eventhubs@2023-01-01-preview' = {
+resource Topic 'Microsoft.EventHub/namespaces/eventhubs@2023-01-01-preview' = {
   parent: EventHubsNamespace
-  name: topicName
+  name: eventHubName
   properties: {
     retentionDescription: {
       cleanupPolicy: 'Delete'
@@ -74,7 +74,7 @@ resource topic 'Microsoft.EventHub/namespaces/eventhubs@2023-01-01-preview' = {
 }
 
 
-resource Topic 'Microsoft.EventHub/namespaces/schemagroups@2023-01-01-preview' = {
+resource SchemaGroup 'Microsoft.EventHub/namespaces/schemagroups@2023-01-01-preview' = {
   parent: EventHubsNamespace
   name: 'Schemas'
   properties: {
@@ -88,3 +88,4 @@ resource Topic 'Microsoft.EventHub/namespaces/schemagroups@2023-01-01-preview' =
 output eventHubsConnectionString string = listKeys('${EventHubsNamespace.id}/AuthorizationRules/RootManageSharedAccessKey', EventHubsNamespace.apiVersion).primaryConnectionString
 #disable-next-line outputs-should-not-contain-secrets
 output blobStorageConnectionString string = 'DefaultEndpointsProtocol=https;AccountName=${StorageAccount.name};AccountKey=${StorageAccount.listKeys().keys[0].value};EndpointSuffix=core.windows.net'
+output eventHubName string = eventHubName
