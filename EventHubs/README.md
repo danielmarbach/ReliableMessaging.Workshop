@@ -8,6 +8,10 @@ Address all `// TODO` in the code.
 
 Bonus exercise:
 
+- Play around with the channels
+- What are the implications of using the channel as a partition key? What would happen if you don't use the channel as a partition key? Are there better ways to partition the data? Discuss your findings it with one of your peers.
+- Set `ProduceData` to `false` in the `SenderOptions`, process all data. Restart and see what happens. The set the `RestartFromBeginning` to `true`. Do the same spiel again but this time change the threshold. Discuss your findings it with one of your peers.
+
 ## Solutions
 
 ### Processor

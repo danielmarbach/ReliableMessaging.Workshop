@@ -26,21 +26,11 @@ public class Processor : IHostedService
         var channelObservations = new ConcurrentDictionary<string, int>();
         batchProcessor.ProcessEventAsync += events =>
         {
-            foreach (var @event in events)
-            {
-                var temperatureChanged = @event.EventBody.ToObjectFromJson<TemperatureChanged>();
-                var channel = @event.Properties["Channel"].ToString()!;
-
-                var numberOfDataPointsObserved = channelObservations.AddOrUpdate(channel,
-                    static (_, _) => 0,
-                    static (_, points, options) => options.CurrentTemperature > options.TemperatureThreshold ? points + 1 : 0,
-                    (CurrentTemperature: temperatureChanged.Current, TemperatureThreshold: processorOptions.Value.TemperatureThreshold));
-
-                logger.LogInformation(numberOfDataPointsObserved < processorOptions.Value.NumberOfDataPointsToObserve
-                    ? $" - {channel}: {temperatureChanged.Current} / {temperatureChanged.Published}{(numberOfDataPointsObserved == 0 ? $" (below threshold of '{processorOptions.Value.TemperatureThreshold}', reset)" : string.Empty)}"
-                    : $" - {channel}: {temperatureChanged.Current} / {temperatureChanged.Published} (above threshold of '{processorOptions.Value.TemperatureThreshold}' for the last '{numberOfDataPointsObserved}' data points)");
-            }
-
+            // TODO
+            // Process the batch of events by implementing the following algorithm:
+            // For every channel increase the number of data points observed by one if the temperature is above the threshold
+            // when the temperature is below the threshold reset the number of data points observed back to zero
+            // log something at information level when the data is below or above the threshold
             return Task.CompletedTask;
         };
 
