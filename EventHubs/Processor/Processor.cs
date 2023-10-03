@@ -36,9 +36,7 @@ public class Processor : IHostedService
                     static (_, points, options) => options.CurrentTemperature > options.TemperatureThreshold ? points + 1 : 0,
                     (CurrentTemperature: temperatureChanged.Current, TemperatureThreshold: processorOptions.Value.TemperatureThreshold));
 
-                logger.LogInformation(numberOfDataPointsObserved < processorOptions.Value.NumberOfDataPointsToObserve
-                    ? $" - {channel}: {temperatureChanged.Current} / {temperatureChanged.Published}{(numberOfDataPointsObserved == 0 ? $" (below threshold of '{processorOptions.Value.TemperatureThreshold}', reset)" : string.Empty)}"
-                    : $" - {channel}: {temperatureChanged.Current} / {temperatureChanged.Published} (above threshold of '{processorOptions.Value.TemperatureThreshold}' for the last '{numberOfDataPointsObserved}' data points)");
+                logger.LogTemperature(numberOfDataPointsObserved, channel, temperatureChanged, processorOptions.Value);
             }
 
             return Task.CompletedTask;
