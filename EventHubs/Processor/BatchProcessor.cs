@@ -35,7 +35,7 @@ public sealed class BatchProcessor : PluggableCheckpointStoreEventProcessor<Even
         {
             var readOnlyList = (IReadOnlyList<EventData>)events;
 
-            logger.LogDebug($"Received batch of {readOnlyList.Count} event on partition {partition.PartitionId}");
+            logger.BatchReceived(readOnlyList.Count, partition.PartitionId);
 
             await ProcessEventAsync(readOnlyList);
 
@@ -49,7 +49,7 @@ public sealed class BatchProcessor : PluggableCheckpointStoreEventProcessor<Even
         }
         catch (Exception ex)
         {
-            logger.LogError($"Error processing partition '{partition.PartitionId} due to {ex.Message}");
+            logger.BatchFailed(ex, partition.PartitionId);
         }
     }
 
@@ -58,7 +58,7 @@ public sealed class BatchProcessor : PluggableCheckpointStoreEventProcessor<Even
         string operationDescription,
         CancellationToken cancellationToken)
     {
-        logger.LogError(exception, $"Error processing partition '{partition.PartitionId} with '{operationDescription}' due to {exception.Message}");
+        logger.ProcessingError(exception, partition.PartitionId, operationDescription);
         return Task.CompletedTask;
     }
 }
