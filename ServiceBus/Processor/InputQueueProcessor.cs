@@ -9,11 +9,11 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
 {
     private readonly ServiceBusClient serviceBusClient;
     private readonly IOptions<ServiceBusOptions> serviceBusOptions;
-    private readonly ILogger<Sender> logger;
+    private readonly ILogger<InputQueueProcessor> logger;
     private ServiceBusProcessor? queueProcessor;
     private ServiceBusSender? publisher;
 
-    public InputQueueProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
+    public InputQueueProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<InputQueueProcessor> logger)
     {
         serviceBusClient = clientFactory.CreateClient("TransactionalClient");
         this.serviceBusOptions = serviceBusOptions;

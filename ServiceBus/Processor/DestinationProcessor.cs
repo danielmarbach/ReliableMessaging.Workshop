@@ -8,11 +8,11 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
 {
     private readonly ServiceBusClient serviceBusClient;
     private readonly IOptions<ServiceBusOptions> serviceBusOptions;
-    private readonly ILogger<Sender> logger;
+    private readonly ILogger<DestinationProcessor> logger;
     private ServiceBusProcessor? queueProcessor;
     private long sensorActivatedCounter = 0;
 
-    public DestinationProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
+    public DestinationProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<DestinationProcessor> logger)
     {
         serviceBusClient = clientFactory.CreateClient("Client");
         this.serviceBusOptions = serviceBusOptions;
