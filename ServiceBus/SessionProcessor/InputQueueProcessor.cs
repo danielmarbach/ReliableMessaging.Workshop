@@ -8,10 +8,10 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
 {
     private readonly ServiceBusClient serviceBusClient;
     private readonly IOptions<ServiceBusOptions> serviceBusOptions;
-    private readonly ILogger<Sender> logger;
+    private readonly ILogger<InputQueueProcessor> logger;
     private ServiceBusSessionProcessor? queueProcessor;
 
-    public InputQueueProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
+    public InputQueueProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<InputQueueProcessor> logger)
     {
         serviceBusClient = clientFactory.CreateClient("Client");
         this.serviceBusOptions = serviceBusOptions;
@@ -72,9 +72,7 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
             processTemperatureChange.Current > serviceBusOptions.Value.TemperatureThreshold
             ? 1 : -channelState.PointsObserved;
 
-        logger.LogInformation(channelState.PointsObserved < serviceBusOptions.Value.NumberOfDataPointsToObserve
-            ? $" - {channel}: {processTemperatureChange.Current} / {processTemperatureChange.Published}{(channelState.PointsObserved == 0 ? $" (below threshold of '{serviceBusOptions.Value.TemperatureThreshold}', reset)" : string.Empty)}"
-            : $" - {channel}: {processTemperatureChange.Current} / {processTemperatureChange.Published} (above threshold of '{serviceBusOptions.Value.TemperatureThreshold}' for the last '{channelState.PointsObserved}' data points)");
+        logger.LogTemperature(channelState.PointsObserved, channel, processTemperatureChange, serviceBusOptions.Value);
 
         await arg.SetSessionStateAsync(BinaryData.FromObjectAsJson(channelState), cancellationToken);
     }
