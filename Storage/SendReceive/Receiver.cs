@@ -87,7 +87,7 @@ public class Receiver : IHostedService
 
         try
         {
-            var envelop = message.Body.ToObjectFromJson<Envelop<Message>>(StorageJsonContext.Default.Options);
+            var envelop = message.Body.ToObjectFromJson<Envelop<ActivateSensor>>(StorageJsonContext.Default.Options);
 
             logger.StartHandling(message.MessageId, envelop.Content.SomeValue);
 

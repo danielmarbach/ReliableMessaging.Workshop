@@ -1,6 +1,6 @@
 namespace SendReceive;
 
-sealed class Message
+sealed class ActivateSensor
 {
     public string SomeValue { get; set; }
 }

@@ -22,13 +22,13 @@ public class Sender : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            var envelop = new Envelop<Message>()
+            var envelop = new Envelop<ActivateSensor>()
             {
                 Headers = new Dictionary<string, string>
                 {
-                    { "MessageType", typeof(Message).FullName! }
+                    { "MessageType", typeof(ActivateSensor).FullName! }
                 },
-                Content = new Message
+                Content = new ActivateSensor
                 {
                     SomeValue = $"SomeValue{messageNumber++}"
                 },

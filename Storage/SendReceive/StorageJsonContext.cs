@@ -2,8 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace SendReceive;
 
-[JsonSerializable(typeof(Message))]
-[JsonSerializable(typeof(Envelop<Message>))]
+[JsonSerializable(typeof(ActivateSensor))]
+[JsonSerializable(typeof(Envelop<ActivateSensor>))]
 internal partial class StorageJsonContext : JsonSerializerContext
 {
 }
