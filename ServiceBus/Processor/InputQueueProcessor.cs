@@ -60,8 +60,8 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
             arg.Message.ApplicationProperties.TryGetValue("MessageType", out var messageTypeValue);
             var handlerTask = messageTypeValue switch
             {
-                "Processor.SubmitOrder" => HandleSubmitOrder(arg.Message, cts.Token),
-                "Processor.OrderAccepted" => HandleOrderAccepted(arg.Message, cts.Token),
+                "Processor.ActivateSensor" => HandleActivateSensor(arg.Message, cts.Token),
+                "Processor.SensorActivated" => HandleSensorActivated(arg.Message, cts.Token),
                 _ => Task.CompletedTask
             };
             await handlerTask;
@@ -87,19 +87,19 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
         }
     }
 
-    async Task HandleSubmitOrder(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
+    async Task HandleActivateSensor(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
         // will make sure operations will enlist
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-        var submitOrder = message.Body.ToObjectFromJson<SubmitOrder>();
-        logger.SubmitOrderReceived(submitOrder.OrderId);
+        var submitOrder = message.Body.ToObjectFromJson<ActivateSensor>();
+        logger.ActivateSensorReceived(submitOrder.ChannelId);
 
         try
         {
-            var orderAccepted = new OrderAccepted
+            var orderAccepted = new SensorActivated
             {
-                OrderId = submitOrder.OrderId
+                ChannelId = submitOrder.ChannelId
             };
             var orderAcceptedMessage = new ServiceBusMessage(BinaryData.FromObjectAsJson(orderAccepted))
             {
@@ -107,7 +107,7 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
                 CorrelationId = message.MessageId,
                 ApplicationProperties =
                 {
-                    { "MessageType", typeof(OrderAccepted).FullName }
+                    { "MessageType", typeof(SensorActivated).FullName }
                 }
             };
 
@@ -120,14 +120,14 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
         }
         catch (OperationCanceledException e)
         {
-            logger.SubmitOrderLockLost(e, submitOrder.OrderId);
+            logger.ActivateSensorLockLost(e, submitOrder.ChannelId);
             throw;
         }
     }
 
-    Task HandleOrderAccepted(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
+    Task HandleSensorActivated(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
-        logger.OrderAcceptedWithSubject(message.Subject);
+        logger.SensorActivatedWithSubject(message.Subject);
         return Task.CompletedTask;
     }
 

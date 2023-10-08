@@ -39,7 +39,7 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
         arg.Message.ApplicationProperties.TryGetValue("MessageType", out var messageTypeValue);
         var handlerTask = messageTypeValue switch
         {
-            "Processor.OrderAccepted" => HandleOrderAccepted(arg.Message, arg.CancellationToken),
+            "Processor.DeviceActivated" => HandleOrderAccepted(arg.Message, arg.CancellationToken),
             _ => Task.CompletedTask
         };
         await handlerTask;

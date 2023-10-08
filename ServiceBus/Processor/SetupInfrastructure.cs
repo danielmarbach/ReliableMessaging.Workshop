@@ -62,12 +62,12 @@ public class SetupInfrastructure : IHostedService
         await administrationClient.CreateRuleAsync(serviceBusOptions.Value.TopicName, destinationSubscriptionName,
             new CreateRuleOptions
             {
-                Name = "OrderAccepted",
+                Name = "SensorActivated",
                 Filter = new CorrelationRuleFilter
                 {
                     ApplicationProperties =
                     {
-                        { "MessageType", typeof(OrderAccepted).FullName }
+                        { "MessageType", typeof(SensorActivated).FullName }
                     }
                 }
             }, cancellationToken);

@@ -26,7 +26,7 @@ public class Sender : IHostedService
         });
 
         var simulationCommands = CreateSimulationCommands();
-        logger.SendWithDuplicates(simulationCommands.Count, simulationCommands.Count - simulationCommands.DistinctBy(c => c.OrderId, StringComparer.Ordinal).Count());
+        logger.SendWithDuplicates(simulationCommands.Count, simulationCommands.Count - simulationCommands.DistinctBy(c => c.ChannelId, StringComparer.Ordinal).Count());
 
         await foreach (var batch in Batches(simulationCommands, commandSender, cancellationToken))
         {
@@ -35,14 +35,14 @@ public class Sender : IHostedService
         }
     }
 
-    private Queue<SubmitOrder> CreateSimulationCommands()
+    private Queue<ActivateSensor> CreateSimulationCommands()
     {
-        var eventsToSend = new Queue<SubmitOrder>();
+        var eventsToSend = new Queue<ActivateSensor>();
         for (var i = 0; i < serviceBusOptions.Value.NumberOfCommands; i++)
         {
-            var submitOrder = new SubmitOrder
+            var submitOrder = new ActivateSensor
             {
-                OrderId = $"orders/{Guid.NewGuid()}"
+                ChannelId = $"channels/{Guid.NewGuid()}"
             };
             eventsToSend.Enqueue(submitOrder);
 
@@ -56,7 +56,7 @@ public class Sender : IHostedService
         return eventsToSend;
     }
 
-    static async IAsyncEnumerable<ServiceBusMessageBatch> Batches(Queue<SubmitOrder> queueCommands,
+    static async IAsyncEnumerable<ServiceBusMessageBatch> Batches(Queue<ActivateSensor> queueCommands,
         ServiceBusSender sender, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var currentBatch = default(ServiceBusMessageBatch);
@@ -69,10 +69,10 @@ public class Sender : IHostedService
             if (!currentBatch.TryAddMessage(new ServiceBusMessage(BinaryData.FromObjectAsJson(command))
                 {
                     ContentType = "application/json",
-                    MessageId = command.OrderId,
+                    MessageId = command.ChannelId,
                     ApplicationProperties =
                     {
-                        { "MessageType", typeof(SubmitOrder).FullName }
+                        { "MessageType", typeof(ActivateSensor).FullName }
                     }
                 }))
             {
