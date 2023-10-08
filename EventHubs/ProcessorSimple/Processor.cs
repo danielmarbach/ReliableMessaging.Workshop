@@ -23,7 +23,6 @@ public class Processor : IHostedService
     {
         await RestartFromBeginningIfNecessary(processorOptions.Value.RestartFromBeginning, blobContainerClient);
 
-        var channelObservations = new ConcurrentDictionary<string, int>();
         batchProcessor.ProcessEventAsync += events =>
         {
             // TODO
