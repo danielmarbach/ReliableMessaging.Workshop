@@ -10,7 +10,7 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
     private readonly IOptions<ServiceBusOptions> serviceBusOptions;
     private readonly ILogger<Sender> logger;
     private ServiceBusProcessor? queueProcessor;
-    private long orderAcceptedCounter = 0;
+    private long sensorActivatedCounter = 0;
 
     public DestinationProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
     {
@@ -39,16 +39,16 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
         arg.Message.ApplicationProperties.TryGetValue("MessageType", out var messageTypeValue);
         var handlerTask = messageTypeValue switch
         {
-            "Processor.DeviceActivated" => HandleOrderAccepted(arg.Message, arg.CancellationToken),
+            "Processor.SensorActivated" => HandleSensorActivated(arg.Message, arg.CancellationToken),
             _ => Task.CompletedTask
         };
         await handlerTask;
     }
 
-    Task HandleOrderAccepted(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
+    Task HandleSensorActivated(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
-        var orderAccepted = Interlocked.Increment(ref orderAcceptedCounter);
-        logger.OrderAccepted(orderAccepted <= serviceBusOptions.Value.NumberOfCommands ? LogLevel.Information : LogLevel.Warning, orderAccepted);
+        var sensorActivated = Interlocked.Increment(ref sensorActivatedCounter);
+        logger.OrderAccepted(sensorActivated <= serviceBusOptions.Value.NumberOfCommands ? LogLevel.Information : LogLevel.Warning, sensorActivated);
         return Task.CompletedTask;
     }
 

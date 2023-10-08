@@ -92,16 +92,16 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
         // will make sure operations will enlist
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-        var submitOrder = message.Body.ToObjectFromJson<ActivateSensor>();
-        logger.ActivateSensorReceived(submitOrder.ChannelId);
+        var activateSensor = message.Body.ToObjectFromJson<ActivateSensor>();
+        logger.ActivateSensorReceived(activateSensor.ChannelId);
 
         try
         {
-            var orderAccepted = new SensorActivated
+            var sensorActivated = new SensorActivated
             {
-                ChannelId = submitOrder.ChannelId
+                ChannelId = activateSensor.ChannelId
             };
-            var orderAcceptedMessage = new ServiceBusMessage(BinaryData.FromObjectAsJson(orderAccepted))
+            var sensorActivatedMessage = new ServiceBusMessage(BinaryData.FromObjectAsJson(sensorActivated))
             {
                 ContentType = "application/json",
                 CorrelationId = message.MessageId,
@@ -112,7 +112,7 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
             };
 
             // the order here doesn't matter because the message will only go out if the rest was successful
-            await publisher.SendMessageAsync(orderAcceptedMessage, cancellationToken);
+            await publisher.SendMessageAsync(sensorActivatedMessage, cancellationToken);
 
             await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(1, 15)), cancellationToken);
 
@@ -120,7 +120,7 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
         }
         catch (OperationCanceledException e)
         {
-            logger.ActivateSensorLockLost(e, submitOrder.ChannelId);
+            logger.ActivateSensorLockLost(e, activateSensor.ChannelId);
             throw;
         }
     }
