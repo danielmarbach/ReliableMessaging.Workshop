@@ -10,7 +10,7 @@ builder.Services.AddAzureClients(azureClientBuilder =>
         .WithName("TransactionalClient")
         .ConfigureOptions(options =>
         {
-            options.EnableCrossEntityTransactions = true;
+           // TODO: Enable cross entity transactions
         });
     azureClientBuilder.AddServiceBusAdministrationClient(builder.Configuration.GetSection("ServiceBusOptions")["ConnectionString"]);
 });

@@ -30,8 +30,7 @@ public class Sender : IHostedService
 
         await foreach (var batch in Batches(simulationCommands, commandSender, cancellationToken))
         {
-            using var batchToSend = batch;
-            await commandSender.SendMessagesAsync(batchToSend, cancellationToken);
+            // TODO Send a batch
         }
     }
 
@@ -64,17 +63,12 @@ public class Sender : IHostedService
         {
             var command = queueCommands.Peek();
 
-            currentBatch ??= await sender.CreateMessageBatchAsync(cancellationToken);
-
-            if (!currentBatch.TryAddMessage(new ServiceBusMessage(BinaryData.FromObjectAsJson(command))
-                {
-                    ContentType = "application/json",
-                    MessageId = command.ChannelId,
-                    ApplicationProperties =
-                    {
-                        { "MessageType", typeof(ActivateSensor).FullName }
-                    }
-                }))
+            // TODO
+            // Create a batch when currentBatch is null
+            // Try adding a a new ServiceBusMessage with the command as json content
+            // Use the channel id as message ID to make sure messages can be de-duplicated
+            // use the application properties to set the "MessageType" to the full name of the payload
+            if (false)
             {
                 if (currentBatch.Count == 0)
                 {

@@ -36,13 +36,9 @@ public class DestinationProcessor : IHostedService, IAsyncDisposable
 
     private async Task ProcessMessages(ProcessMessageEventArgs arg)
     {
-        arg.Message.ApplicationProperties.TryGetValue("MessageType", out var messageTypeValue);
-        var handlerTask = messageTypeValue switch
-        {
-            "Processor.SensorActivated" => HandleSensorActivated(arg.Message, arg.CancellationToken),
-            _ => Task.CompletedTask
-        };
-        await handlerTask;
+        // TODO
+        // Extract the MessageType from the ApplicationProperties and call HandleSensorActivated if the type matches
+        // otherwise consume the message
     }
 
     Task HandleSensorActivated(ServiceBusReceivedMessage message, CancellationToken cancellationToken)

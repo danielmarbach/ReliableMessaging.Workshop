@@ -89,40 +89,17 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
 
     async Task HandleActivateSensor(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
+        // TODO
+        // Wrap everything in a transaction scope with async flow options enabled
+        // Deserialize the body into an ActivateSensor instance
+        // Create a SensorActivated type and create a new ServiceBusMessage with that content
+        // Set the CorrelationId to the original message ID
+        // Set the application properties MessageType to the SensorActivated type
+        // Publish the event with the "publisher"  sender and eventually complete the transaction scope
         // will make sure operations will enlist
-        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-        var activateSensor = message.Body.ToObjectFromJson<ActivateSensor>();
-        logger.ActivateSensorReceived(activateSensor.ChannelId);
-
-        try
-        {
-            var sensorActivated = new SensorActivated
-            {
-                ChannelId = activateSensor.ChannelId
-            };
-            var sensorActivatedMessage = new ServiceBusMessage(BinaryData.FromObjectAsJson(sensorActivated))
-            {
-                ContentType = "application/json",
-                CorrelationId = message.MessageId,
-                ApplicationProperties =
-                {
-                    { "MessageType", typeof(SensorActivated).FullName }
-                }
-            };
-
-            // the order here doesn't matter because the message will only go out if the rest was successful
-            await publisher.SendMessageAsync(sensorActivatedMessage, cancellationToken);
-
-            await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(1, 15)), cancellationToken);
-
-            scope.Complete();
-        }
-        catch (OperationCanceledException e)
-        {
-            logger.ActivateSensorLockLost(e, activateSensor.ChannelId);
-            throw;
-        }
+        // here to simulate some work
+        await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(1, 15)), cancellationToken);
     }
 
     Task HandleSensorActivated(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
