@@ -2,6 +2,20 @@
 
 ## Exercises
 
+### Processor (Simple)
+
+Address all `// TODO` in the code.
+
+Bonus exercise:
+- Disable the forwarding on one of the subscriptions and try to introduce a new processor that receives from the subscription.
+- Let's assume you'd have to throttle concurrency across all subscriptions on a processor that has multiple subscription receivers. How would you achieve that? Discuss with one of your peers the benefits and drawback of forwarding to the input queue from the subscription
+
+### SessionProcessor (Simple)
+
+Address all `// TODO` in the code.
+
+Bonus exercise:
+
 ## Solutions
 
 ### Processor
