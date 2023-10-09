@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ProcessorSimple": {
+      "commandName": "Project",
+      "dotnetRunMessages": true
+    }
+  }
+}

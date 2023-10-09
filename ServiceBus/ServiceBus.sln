@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Processor", "Processor\Proc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionProcessor", "SessionProcessor\SessionProcessor.csproj", "{0EAC7B05-64C3-4F6E-B2F8-C931C71782D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessorSimple", "ProcessorSimple\ProcessorSimple.csproj", "{ED46029D-8428-49D7-BE7D-C90D5BD3BCFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionProcessorSimple", "SessionProcessorSimple\SessionProcessorSimple.csproj", "{71D8E8BA-21AD-4BA7-B5C2-2852447A2C30}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{0EAC7B05-64C3-4F6E-B2F8-C931C71782D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EAC7B05-64C3-4F6E-B2F8-C931C71782D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EAC7B05-64C3-4F6E-B2F8-C931C71782D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED46029D-8428-49D7-BE7D-C90D5BD3BCFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED46029D-8428-49D7-BE7D-C90D5BD3BCFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED46029D-8428-49D7-BE7D-C90D5BD3BCFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED46029D-8428-49D7-BE7D-C90D5BD3BCFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71D8E8BA-21AD-4BA7-B5C2-2852447A2C30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71D8E8BA-21AD-4BA7-B5C2-2852447A2C30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71D8E8BA-21AD-4BA7-B5C2-2852447A2C30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71D8E8BA-21AD-4BA7-B5C2-2852447A2C30}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
