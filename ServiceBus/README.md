@@ -15,6 +15,9 @@ Bonus exercise:
 Address all `// TODO` in the code.
 
 Bonus exercise:
+- Play around with the channels
+- What are the implications of using the channel as a session id? What would happen if you don't use the channel as a session id? Are there better ways to seggregate the data? Discuss your findings it with one of your peers
+- What are the drawbacks of using session state as a durable store?
 
 ## Solutions
 

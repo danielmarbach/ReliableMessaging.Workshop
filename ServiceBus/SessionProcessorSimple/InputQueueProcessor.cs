@@ -19,15 +19,9 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
     }
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        queueProcessor = serviceBusClient.CreateSessionProcessor(serviceBusOptions.Value.InputQueue, new ServiceBusSessionProcessorOptions
-        {
-            ReceiveMode = ServiceBusReceiveMode.PeekLock,
-            MaxConcurrentSessions = 10,
-            AutoCompleteMessages = true,
-            PrefetchCount = 10,
-            Identifier = $"SessionProcessor-{serviceBusOptions.Value.InputQueue}",
-            MaxAutoLockRenewalDuration = TimeSpan.FromSeconds(10),
-        });
+        // TODO
+        // Create a session processor that auto completes messages, has maximum 10 concurrent sessions and a prefetch count of 10
+        queueProcessor = null;
         queueProcessor.ProcessMessageAsync += ProcessMessages;
         queueProcessor.ProcessErrorAsync += ProcessError;
         await queueProcessor.StartProcessingAsync(cancellationToken);
@@ -61,20 +55,15 @@ public class InputQueueProcessor : IHostedService, IAsyncDisposable
 
     async Task HandleProcessTemperatureChange(ProcessSessionMessageEventArgs arg, CancellationToken cancellationToken)
     {
+        // TODO
+        // Deserialize the ProcessTemperatureChange command from the message
+        // Use ChannelState as a session state to durably store the last data points observed
+        // Implement the following algorithm:
+        // For every channel increase the number of data points observed by one if the temperature is above the threshold
+        // when the temperature is below the threshold reset the number of data points observed back to zero
+        // log something at information level when the data is below or above the threshold
         var message = arg.Message;
         var channel = arg.SessionId;
-        var processTemperatureChange = message.Body.ToObjectFromJson<ProcessTemperatureChange>();
-
-        var sessionState = await arg.GetSessionStateAsync(cancellationToken);
-        var channelState = sessionState?.ToObjectFromJson<ChannelState>() ?? new ChannelState();
-
-        channelState.PointsObserved +=
-            processTemperatureChange.Current > serviceBusOptions.Value.TemperatureThreshold
-            ? 1 : -channelState.PointsObserved;
-
-        logger.LogTemperature(channelState.PointsObserved, channel, processTemperatureChange, serviceBusOptions.Value);
-
-        await arg.SetSessionStateAsync(BinaryData.FromObjectAsJson(channelState), cancellationToken);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

@@ -21,11 +21,8 @@ public class SetupInfrastructure : IHostedService
             await administrationClient.DeleteQueueAsync(serviceBusOptions.Value.InputQueue, cancellationToken);
         }
 
-        await administrationClient.CreateQueueAsync(new CreateQueueOptions(serviceBusOptions.Value.InputQueue)
-        {
-            LockDuration = TimeSpan.FromSeconds(5),
-            RequiresSession = true,
-        }, cancellationToken);
+        // TODO
+        // Create the queue with session support
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

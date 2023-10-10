@@ -63,15 +63,11 @@ public class Sender : IHostedService
 
             currentBatch ??= await sender.CreateMessageBatchAsync(cancellationToken);
 
-            if (!currentBatch.TryAddMessage(new ServiceBusMessage(BinaryData.FromObjectAsJson(command))
-                {
-                    ContentType = "application/json",
-                    ApplicationProperties =
-                    {
-                        { "MessageType", typeof(ProcessTemperatureChange).FullName }
-                    },
-                    SessionId = channel
-                }))
+            // TODO
+            // Populate the payload with the command content
+            // Set the application properties MessageType to ProcessTemperatureChange full name
+            // Set the session id to the channel
+            if (!currentBatch.TryAddMessage(new ServiceBusMessage()))
             {
                 if (currentBatch.Count == 0)
                 {
