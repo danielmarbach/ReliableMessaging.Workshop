@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendReceive", "SendReceive\SendReceive.csproj", "{D5384BAE-026A-4DF1-AABE-F8F5348BA7D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendReceiveSimple", "SendReceiveSimple\SendReceiveSimple.csproj", "{94FDCFC0-5415-4291-BEFF-A7A598231295}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{D5384BAE-026A-4DF1-AABE-F8F5348BA7D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5384BAE-026A-4DF1-AABE-F8F5348BA7D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5384BAE-026A-4DF1-AABE-F8F5348BA7D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94FDCFC0-5415-4291-BEFF-A7A598231295}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94FDCFC0-5415-4291-BEFF-A7A598231295}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94FDCFC0-5415-4291-BEFF-A7A598231295}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94FDCFC0-5415-4291-BEFF-A7A598231295}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -8,7 +8,9 @@ Address all `// TODO` in the code.
 
 Bonus exercise:
 - Disable the forwarding on one of the subscriptions and try to introduce a new processor that receives from the subscription.
+- How is it possible to deadletter messages and modify the original message with let's say the exception stack trace?
 - Let's assume you'd have to throttle concurrency across all subscriptions on a processor that has multiple subscription receivers. How would you achieve that? Discuss with one of your peers the benefits and drawback of forwarding to the input queue from the subscription
+- Is it possible to send messages into the future? If so what could you achieve with that?
 
 ### SessionProcessor (Simple)
 
@@ -18,6 +20,7 @@ Bonus exercise:
 - Play around with the channels
 - What are the implications of using the channel as a session id? What would happen if you don't use the channel as a session id? Are there better ways to seggregate the data? Discuss your findings it with one of your peers
 - What are the drawbacks of using session state as a durable store?
+- How could you combine messages sent into the future with sessions? Is it even possible?
 
 ## Solutions
 
