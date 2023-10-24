@@ -40,16 +40,16 @@ public class Sender : IHostedService
         var eventsToSend = new Queue<ActivateSensor>();
         for (var i = 0; i < serviceBusOptions.Value.NumberOfCommands; i++)
         {
-            var submitOrder = new ActivateSensor
+            var activateSensor = new ActivateSensor
             {
                 ChannelId = $"channels/{Guid.NewGuid()}"
             };
-            eventsToSend.Enqueue(submitOrder);
+            eventsToSend.Enqueue(activateSensor);
 
             // create some duplicates
             if (i % 3 == 0)
             {
-                eventsToSend.Enqueue(submitOrder);
+                eventsToSend.Enqueue(activateSensor);
             }
         }
 
