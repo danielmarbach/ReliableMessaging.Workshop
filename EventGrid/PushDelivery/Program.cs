@@ -1,6 +1,5 @@
 ﻿using Azure.Messaging;
 using Azure.Messaging.EventGrid;
-using Azure.Messaging.EventGrid.Namespaces;
 using Azure.Messaging.EventGrid.SystemEvents;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Azure;
@@ -18,7 +17,7 @@ var app = builder.Build();
 
 app.Use(async (context, next) =>
 {
-    if (context.Request.Method == HttpMethods.Options && 
+    if (context.Request.Method == HttpMethods.Options &&
         context.Request.Headers.TryGetValue("WebHook-Request-Callback", out var callbacks))
     {
         context.Response.StatusCode = 200;
@@ -27,7 +26,7 @@ app.Use(async (context, next) =>
 
         var factory = context.RequestServices.GetRequiredService<IHttpClientFactory>();
         var httpClient = factory.CreateClient();
-            
+
         context.Response.OnCompleted(static async state =>
         {
             var (httpClient, callbackUri) = (Tuple<HttpClient, string>) state;
@@ -43,7 +42,7 @@ app.Use(async (context, next) =>
 app.MapPost("/api/EventGridEventHandler", async ([FromBody] object request, Queue queue) =>
 {
     var cloudEvent = CloudEvent.Parse(BinaryData.FromObjectAsJson(request));
-    if (cloudEvent.TryGetSystemEventData(out var systemEvent) && 
+    if (cloudEvent.TryGetSystemEventData(out var systemEvent) &&
         systemEvent is ServiceBusActiveMessagesAvailableWithNoListenersEventData
         {
             EntityType: "queue"
