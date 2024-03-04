@@ -42,16 +42,37 @@ The sample/solution shows how to leverage Event Grid notifications delivered ove
 
 1. A fully deployed Azure Service Bus Premium namespace (use `eventgrid-push-servicebus.bicep` to deploy it) (adjust the necessary parameters or [create a parameter file](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files))
 1. Add the connection string from the output to `appsettings.json` in the `ServiceBus` section
+
+##### Ngrok
+
 1. A [ngrok account](https://ngrok.com) with a free domain
 1. [Installed ngrok CLI](https://ngrok.com/docs/getting-started/#step-2-install-the-ngrok-agent) on the computer
+1. Log into ngrok in the CLI
 
+##### Dev Tunnels
+
+Alternatively it is possible to use Dev-Tunnles
+
+1. [Install the devtunnels CLI](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started?#install)
+1. [Login](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/get-started#login)
 
 #### Running it
 
 1. Make sure the endpoint is running before deploying! `dotnet run -c Release`
-1. Log into ngrok in the CLI
+
+##### NGrok
+
 1. Setup ngrok "tunneling" with `ngrok http --domain=customdomain.ngrok-free.app 8080 --host-header=rewrite` (assuming the solution runs on port 8080 locally, replace `customdomain` with your custom domain)
-1. Use `eventgrid-push.bicep` to deploy (adjust the necessary parameters or [create a parameter file](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files)). Make sure to at least replace the ngrok `endpointUrl`
+
+##### Dev Tunnels
+
+1. Setup devtunnel with `devtunnel host -p 8080 --allow-anonymous`
+
+Unfortunately at the time of writing it is not possible to use [`X-Tunnel-Authorization`](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/security#tunnel-access).
+
+##### Deploy
+
+1. Use `eventgrid-push.bicep` to deploy (adjust the necessary parameters or [create a parameter file](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files)). Make sure to at least replace the `endpointUrl`
 1. Send messages into the configured queue either writing some code or use [ServiceBus Explorer](https://github.com/paolosalvatori/ServiceBusExplorer) to send messages.
 
 #### Reading material
