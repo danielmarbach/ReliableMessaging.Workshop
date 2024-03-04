@@ -52,7 +52,7 @@ The sample/solution shows how to leverage Event Grid notifications delivered ove
 1. Log into ngrok in the CLI
 1. Setup ngrok "tunneling" with `ngrok http --domain=customdomain.ngrok-free.app 8080 --host-header=rewrite` (assuming the solution runs on port 8080 locally, replace `customdomain` with your custom domain)
 1. Use `eventgrid-push.bicep` to deploy (adjust the necessary parameters or [create a parameter file](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files)). Make sure to at least replace the ngrok `endpointUrl`
-1. Send messages into the configured queue either writing some code or use ServiceBus Explorer to send messages.
+1. Send messages into the configured queue either writing some code or use [ServiceBus Explorer](https://github.com/paolosalvatori/ServiceBusExplorer) to send messages.
 
 #### Reading material
 
