@@ -66,13 +66,14 @@ Alternatively it is possible to use Dev-Tunnles
 
 ##### Dev Tunnels
 
-1. Setup devtunnel with `devtunnel host -p 8080 --allow-anonymous`
-
-Unfortunately at the time of writing it is not possible to use [`X-Tunnel-Authorization`](https://learn.microsoft.com/en-us/azure/developer/dev-tunnels/security#tunnel-access).
+1. Setup devtunnel with `devtunnel host -p 8080 --allow-anonymous` with anonymous access _or_
+1. Setup devtunnel with `devtunnel host -p 8080` and note down the tunnel id
+1. Create an access token `devtunnel token <tunnelI-d> --scope connect`
+1. Add your token to the `X-Tunnel-Authorization` value
 
 ##### Deploy
 
-1. Use `eventgrid-push.bicep` to deploy (adjust the necessary parameters or [create a parameter file](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files)). Make sure to at least replace the `endpointUrl`
+1. Use `eventgrid-push.bicep` to deploy (adjust the necessary parameters or [create a parameter file](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files)). Make sure to at least replace the `endpointUrl` to your ngrok or dev tunnel.
 1. Send messages into the configured queue either writing some code or use [ServiceBus Explorer](https://github.com/paolosalvatori/ServiceBusExplorer) to send messages.
 
 #### Reading material

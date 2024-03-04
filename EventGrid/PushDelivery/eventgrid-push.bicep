@@ -4,7 +4,8 @@ param namespaceName string = 'ReliableMessagingServiceBus1'
 param queueName string = 'ReliableMessagingServiceBus1Queue1'
 param topicName string = 'ReliableMessagingServiceBus1Topic1'
 param subscriptionName string = 'ReliableMessagingServiceBus1TopicSubscription'
-param endpointUrl string = 'https://xyz.ngrok-free.app/api/EventGridEventHandler'
+// or https://xyz.ngrok-free.app
+param endpointUrl string = 'https://<tunnel_id>.devtunnels.ms:8080/api/EventGridEventHandler'
 
 resource ServiceBus 'Microsoft.ServiceBus/namespaces@2022-10-01-preview' existing = {
   name: namespaceName
@@ -39,6 +40,16 @@ resource EventGridSubscription 'Microsoft.EventGrid/systemTopics/eventSubscripti
         maxEventsPerBatch: 1
         preferredBatchSizeInKilobytes: 64
         endpointUrl: endpointUrl
+        deliveryAttributeMappings: [
+          {
+            name: 'X-Tunnel-Authorization'
+            properties: {
+              isSecret: true
+              value: 'tunnel <token>'
+            }
+            type: 'Static'
+          }
+        ]
       }
     }
     filter: {
