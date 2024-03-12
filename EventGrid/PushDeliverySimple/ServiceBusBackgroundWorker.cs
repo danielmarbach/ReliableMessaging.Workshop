@@ -26,7 +26,7 @@ public class ServiceBusBackgroundWorker(
     {
         var logger = loggerFactory.CreateLogger(fetchMessages.Queue);
         // TODO
-        // 1. Create a receiver for the queue using the Azure Service Bus SDK you are already familiar with
-        // 1. Receive and process all messages from the queue by calling logger.HandleMessage
+        // 4. Create a receiver for the queue using the Azure Service Bus SDK you are already familiar with
+        // 5. Receive and process all messages from the queue by calling logger.HandleMessage
     }
 }

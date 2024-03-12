@@ -44,8 +44,8 @@ app.MapPost("/api/EventGridEventHandler", async ([FromBody] object request, Queu
 {
     // TODO
     // 1. Extract the cloud event data from the request
-    // 1. Extract the ServiceBusActiveMessagesAvailableWithNoListenersEventData as a system event
-    // 1. Throw a FetchMessagesFromQueue into local worker queue
+    // 2. Extract the ServiceBusActiveMessagesAvailableWithNoListenersEventData as a system event
+    // 3. Throw a FetchMessagesFromQueue into local worker queue
     // Hints: look at CloudEvent and TryGetSystemEventData
 });
 
