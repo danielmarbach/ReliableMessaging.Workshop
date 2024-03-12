@@ -4,16 +4,11 @@ using Microsoft.Extensions.Options;
 
 namespace PullDelivery;
 
-public class Sender : IHostedService
+public class Sender(EventGridClient eventGridClient, IOptions<EventGridOptions> eventGridOptions)
+    : IHostedService
 {
-    private readonly EventGridClient eventGridClient;
-    private readonly string topicName;
-
-    public Sender(EventGridClient eventGridClient, IOptions<EventGridOptions> eventGridOptions)
-    {
-        this.eventGridClient = eventGridClient;
-        topicName = eventGridOptions.Value.TopicName;
-    }
+    private readonly EventGridClient eventGridClient = eventGridClient;
+    private readonly string topicName = eventGridOptions.Value.TopicName;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {

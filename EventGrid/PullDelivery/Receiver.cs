@@ -5,20 +5,14 @@ using Microsoft.Extensions.Options;
 
 namespace PullDelivery;
 
-public class Receiver : BackgroundService
+public class Receiver(
+    EventGridClient eventGridClient,
+    ILogger<Receiver> logger,
+    IOptions<EventGridOptions> eventGridOptions)
+    : BackgroundService
 {
-    private readonly EventGridClient eventGridClient;
-    private readonly ILogger<Receiver> logger;
-    private readonly string subscriptionName;
-    private readonly string topicName;
-
-    public Receiver(EventGridClient eventGridClient, ILogger<Receiver> logger, IOptions<EventGridOptions> eventGridOptions)
-    {
-        this.eventGridClient = eventGridClient;
-        this.logger = logger;
-        topicName = eventGridOptions.Value.TopicName;
-        subscriptionName = eventGridOptions.Value.SubscriptionName;
-    }
+    private readonly string subscriptionName = eventGridOptions.Value.SubscriptionName;
+    private readonly string topicName = eventGridOptions.Value.TopicName;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

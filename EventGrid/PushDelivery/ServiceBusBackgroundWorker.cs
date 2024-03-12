@@ -2,19 +2,12 @@ using Azure.Messaging.ServiceBus;
 
 namespace PushDelivery;
 
-public class ServiceBusBackgroundWorker : BackgroundService
+public class ServiceBusBackgroundWorker(
+    Queue workQueue,
+    ServiceBusClient serviceBusClient,
+    ILoggerFactory loggerFactory)
+    : BackgroundService
 {
-    private readonly Queue workQueue;
-    private readonly ServiceBusClient serviceBusClient;
-    private readonly ILoggerFactory loggerFactory;
-
-    public ServiceBusBackgroundWorker(Queue workQueue, ServiceBusClient serviceBusClient, ILoggerFactory loggerFactory)
-    {
-        this.workQueue = workQueue;
-        this.serviceBusClient = serviceBusClient;
-        this.loggerFactory = loggerFactory;
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
