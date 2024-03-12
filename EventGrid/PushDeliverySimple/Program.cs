@@ -22,8 +22,8 @@ app.Use(async (context, next) =>
         context.Request.Headers.TryGetValue("WebHook-Request-Callback", out var callbacks))
     {
         context.Response.StatusCode = 200;
-        context.Response.Headers.Add("WebHook-Request-Origin", "eventgrid.azure.net");
-        context.Response.Headers.Add("WebHook-Allowed-Rate", "120");
+        context.Response.Headers.Append("WebHook-Request-Origin", "eventgrid.azure.net");
+        context.Response.Headers.Append("WebHook-Allowed-Rate", "120");
 
         var factory = context.RequestServices.GetRequiredService<IHttpClientFactory>();
         var httpClient = factory.CreateClient();
