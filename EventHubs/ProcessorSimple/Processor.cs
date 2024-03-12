@@ -21,7 +21,7 @@ public class Processor(
         batchProcessor.ProcessEventAsync += events =>
         {
             // TODO
-            // Process the batch of events by implementing the following algorithm:
+            // 4. Process the batch of events by implementing the following algorithm:
             // For every channel increase the number of data points observed by one if the temperature is above the threshold
             // when the temperature is below the threshold reset the number of data points observed back to zero
             // log something at information level when the data is below or above the threshold
