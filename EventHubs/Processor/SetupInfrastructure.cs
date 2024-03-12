@@ -3,17 +3,9 @@ using Azure.Storage.Blobs;
 
 namespace Processor;
 
-public class SetupInfrastructure : IHostedService
+public class SetupInfrastructure(BlobContainerClient blobContainerClient, ILogger<SetupInfrastructure> logger)
+    : IHostedService
 {
-    private readonly BlobContainerClient blobContainerClient;
-    private readonly ILogger<SetupInfrastructure> logger;
-
-    public SetupInfrastructure(BlobContainerClient blobContainerClient, ILogger<SetupInfrastructure> logger)
-    {
-        this.blobContainerClient = blobContainerClient;
-        this.logger = logger;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         RequestFailedException? exception;

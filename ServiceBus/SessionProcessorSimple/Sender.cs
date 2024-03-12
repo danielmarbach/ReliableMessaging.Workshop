@@ -5,18 +5,14 @@ using Microsoft.Extensions.Options;
 
 namespace SessionProcessor;
 
-public class Sender : IHostedService
+public class Sender(
+    IAzureClientFactory<ServiceBusClient> clientFactory,
+    IOptions<ServiceBusOptions> serviceBusOptions,
+    ILogger<Sender> logger)
+    : IHostedService
 {
-    private readonly ServiceBusClient serviceBusClient;
-    private readonly IOptions<ServiceBusOptions> serviceBusOptions;
-    private readonly ILogger<Sender> logger;
-
-    public Sender(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<Sender> logger)
-    {
-        serviceBusClient = clientFactory.CreateClient("Client");
-        this.serviceBusOptions = serviceBusOptions;
-        this.logger = logger;
-    }
+    private readonly ServiceBusClient serviceBusClient = clientFactory.CreateClient("Client");
+    private readonly ILogger<Sender> logger = logger;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {

@@ -5,20 +5,15 @@ using Microsoft.Extensions.Options;
 
 namespace Processor;
 
-public class Processor : IHostedService
+public class Processor(
+    IOptions<ProcessorOptions> processorOptions,
+    BlobContainerClient blobContainerClient,
+    BatchProcessor batchProcessor,
+    ILogger<Processor> logger)
+    : IHostedService
 {
-    private readonly IOptions<ProcessorOptions> processorOptions;
-    private readonly BlobContainerClient blobContainerClient;
-    private readonly BatchProcessor batchProcessor;
-    private readonly ILogger<Processor> logger;
+    private readonly ILogger<Processor> logger = logger;
 
-    public Processor(IOptions<ProcessorOptions> processorOptions, BlobContainerClient blobContainerClient, BatchProcessor batchProcessor, ILogger<Processor> logger)
-    {
-        this.processorOptions = processorOptions;
-        this.blobContainerClient = blobContainerClient;
-        this.batchProcessor = batchProcessor;
-        this.logger = logger;
-    }
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         await RestartFromBeginningIfNecessary(processorOptions.Value.RestartFromBeginning, blobContainerClient);

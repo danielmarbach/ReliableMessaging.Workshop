@@ -4,20 +4,15 @@ using Microsoft.Extensions.Options;
 
 namespace Processor;
 
-public class DestinationProcessor : IHostedService, IAsyncDisposable
+public class DestinationProcessor(
+    IAzureClientFactory<ServiceBusClient> clientFactory,
+    IOptions<ServiceBusOptions> serviceBusOptions,
+    ILogger<DestinationProcessor> logger)
+    : IHostedService, IAsyncDisposable
 {
-    private readonly ServiceBusClient serviceBusClient;
-    private readonly IOptions<ServiceBusOptions> serviceBusOptions;
-    private readonly ILogger<DestinationProcessor> logger;
+    private readonly ServiceBusClient serviceBusClient = clientFactory.CreateClient("Client");
     private ServiceBusProcessor? queueProcessor;
     private long sensorActivatedCounter = 0;
-
-    public DestinationProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<DestinationProcessor> logger)
-    {
-        serviceBusClient = clientFactory.CreateClient("Client");
-        this.serviceBusOptions = serviceBusOptions;
-        this.logger = logger;
-    }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {

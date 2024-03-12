@@ -2,17 +2,9 @@ using Azure.Storage.Queues;
 
 namespace SendReceive;
 
-public class Sender : BackgroundService
+public class Sender(QueueServiceClient queueServiceClient, IConfiguration configuration)
+    : BackgroundService
 {
-    private readonly QueueServiceClient queueServiceClient;
-    private readonly IConfiguration configuration;
-
-    public Sender(QueueServiceClient queueServiceClient, IConfiguration configuration)
-    {
-        this.queueServiceClient = queueServiceClient;
-        this.configuration = configuration;
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var sender = queueServiceClient.GetQueueClient(configuration.GetSection("Storage")["QueueName"]);

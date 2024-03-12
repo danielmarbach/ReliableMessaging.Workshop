@@ -5,12 +5,10 @@ using Azure.Storage.Queues.Models;
 
 namespace SendReceive;
 
-public class Receiver : IHostedService
+public class Receiver(QueueServiceClient queueServiceClient, IConfiguration configuration, ILogger<Receiver> logger)
+    : IHostedService
 {
     private const int MaximumConcurrency = 32;
-    private readonly QueueServiceClient queueServiceClient;
-    private readonly IConfiguration configuration;
-    private readonly ILogger<Receiver> logger;
     private readonly SemaphoreSlim concurrencyLimiter = new(MaximumConcurrency);
 
     private ConditionalWeakTable<CancellationTokenSource, UpdateReceipt> sourceToPopReceipt = new();
@@ -18,13 +16,6 @@ public class Receiver : IHostedService
     private QueueClient receiver;
     private readonly TimeSpan visibilityTimeout = TimeSpan.FromSeconds(10);
     private readonly TimeSpan workTime = TimeSpan.FromSeconds(12);
-
-    public Receiver(QueueServiceClient queueServiceClient, IConfiguration configuration, ILogger<Receiver> logger)
-    {
-        this.queueServiceClient = queueServiceClient;
-        this.configuration = configuration;
-        this.logger = logger;
-    }
 
     [MemberNotNull(nameof(receiver), nameof(cancellationTokenSource))]
     public async Task StartAsync(CancellationToken cancellationToken)

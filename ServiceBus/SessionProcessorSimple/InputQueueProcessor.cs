@@ -4,19 +4,16 @@ using Microsoft.Extensions.Options;
 
 namespace SessionProcessor;
 
-public class InputQueueProcessor : IHostedService, IAsyncDisposable
+public class InputQueueProcessor(
+    IAzureClientFactory<ServiceBusClient> clientFactory,
+    IOptions<ServiceBusOptions> serviceBusOptions,
+    ILogger<InputQueueProcessor> logger)
+    : IHostedService, IAsyncDisposable
 {
-    private readonly ServiceBusClient serviceBusClient;
-    private readonly IOptions<ServiceBusOptions> serviceBusOptions;
-    private readonly ILogger<InputQueueProcessor> logger;
+    private readonly ServiceBusClient serviceBusClient = clientFactory.CreateClient("Client");
+    private readonly IOptions<ServiceBusOptions> serviceBusOptions = serviceBusOptions;
     private ServiceBusSessionProcessor? queueProcessor;
 
-    public InputQueueProcessor(IAzureClientFactory<ServiceBusClient> clientFactory, IOptions<ServiceBusOptions> serviceBusOptions, ILogger<InputQueueProcessor> logger)
-    {
-        serviceBusClient = clientFactory.CreateClient("Client");
-        this.serviceBusOptions = serviceBusOptions;
-        this.logger = logger;
-    }
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         // TODO

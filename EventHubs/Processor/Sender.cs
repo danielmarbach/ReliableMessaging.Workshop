@@ -4,17 +4,9 @@ using Microsoft.Extensions.Options;
 
 namespace Processor;
 
-public class Sender : IHostedService
+public class Sender(IOptions<SenderOptions> senderOptions, EventHubProducerClient eventHubProducerClient)
+    : IHostedService
 {
-    private readonly IOptions<SenderOptions> senderOptions;
-    private readonly EventHubProducerClient eventHubProducerClient;
-
-    public Sender(IOptions<SenderOptions> senderOptions, EventHubProducerClient eventHubProducerClient)
-    {
-        this.senderOptions = senderOptions;
-        this.eventHubProducerClient = eventHubProducerClient;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         if (!senderOptions.Value.ProduceData)

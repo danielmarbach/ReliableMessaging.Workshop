@@ -3,17 +3,11 @@ using Microsoft.Extensions.Options;
 
 namespace Processor;
 
-public class SetupInfrastructure : IHostedService
+public class SetupInfrastructure(
+    ServiceBusAdministrationClient administrationClient,
+    IOptions<ServiceBusOptions> serviceBusOptions)
+    : IHostedService
 {
-    private readonly ServiceBusAdministrationClient administrationClient;
-    private readonly IOptions<ServiceBusOptions> serviceBusOptions;
-
-    public SetupInfrastructure(ServiceBusAdministrationClient administrationClient, IOptions<ServiceBusOptions> serviceBusOptions)
-    {
-        this.administrationClient = administrationClient;
-        this.serviceBusOptions = serviceBusOptions;
-    }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         if (await administrationClient.QueueExistsAsync(serviceBusOptions.Value.InputQueue, cancellationToken))

@@ -3,28 +3,21 @@ using Azure.Messaging.EventHubs.Primitives;
 
 namespace Processor;
 
-public sealed class BatchProcessor : PluggableCheckpointStoreEventProcessor<EventProcessorPartition>
+public sealed class BatchProcessor(
+    CheckpointStore checkpointStore,
+    int eventBatchMaximumCount,
+    string consumerGroup,
+    string connectionString,
+    string eventHubName,
+    ILogger<BatchProcessor> logger,
+    EventProcessorOptions? clientOptions = default)
+    : PluggableCheckpointStoreEventProcessor<EventProcessorPartition>(checkpointStore,
+        eventBatchMaximumCount,
+        consumerGroup,
+        connectionString,
+        eventHubName,
+        clientOptions)
 {
-    private readonly ILogger<BatchProcessor> logger;
-
-    public BatchProcessor(CheckpointStore checkpointStore,
-        int eventBatchMaximumCount,
-        string consumerGroup,
-        string connectionString,
-        string eventHubName,
-        ILogger<BatchProcessor> logger,
-        EventProcessorOptions? clientOptions = default)
-        : base(
-            checkpointStore,
-            eventBatchMaximumCount,
-            consumerGroup,
-            connectionString,
-            eventHubName,
-            clientOptions)
-    {
-        this.logger = logger;
-    }
-
     public Func<IReadOnlyList<EventData>, Task> ProcessEventAsync { get; set; } = data => Task.CompletedTask;
 
     protected override async Task OnProcessingEventBatchAsync(IEnumerable<EventData> events,
