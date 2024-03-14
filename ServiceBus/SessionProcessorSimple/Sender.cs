@@ -60,9 +60,9 @@ public class Sender(
             currentBatch ??= await sender.CreateMessageBatchAsync(cancellationToken);
 
             // TODO
-            // Populate the payload with the command content
-            // Set the application properties MessageType to ProcessTemperatureChange full name
-            // Set the session id to the channel
+            // 1. Populate the payload with the command content
+            // 2. Set the application properties MessageType to ProcessTemperatureChange full name
+            // 3. Set the session id to the channel
             if (!currentBatch.TryAddMessage(new ServiceBusMessage()))
             {
                 if (currentBatch.Count == 0)

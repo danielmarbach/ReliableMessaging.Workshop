@@ -18,7 +18,8 @@ public class SetupInfrastructure(
         await administrationClient.CreateQueueAsync(new CreateQueueOptions(serviceBusOptions.Value.InputQueue)
         {
             LockDuration = TimeSpan.FromSeconds(5),
-            // TODO set the deduplication detection windows to one minute and enable deduplication
+            // TODO
+            // 14. set the deduplication detection windows to one minute and enable deduplication
         }, cancellationToken);
 
         if (await administrationClient.QueueExistsAsync(serviceBusOptions.Value.DestinationQueue, cancellationToken))
@@ -53,7 +54,7 @@ public class SetupInfrastructure(
             "$Default", cancellationToken);
 
         // TODO
-        // Create a rule that uses a correlation filter to subscribe to all message types of type SensorActivated
+        // 15. Create a rule that uses a correlation filter to subscribe to all message types of type SensorActivated
 
         var inputQueueSubscriptionName = $"{serviceBusOptions.Value.InputQueue}Subscription";
         if (await administrationClient.SubscriptionExistsAsync(serviceBusOptions.Value.TopicName,
@@ -72,7 +73,7 @@ public class SetupInfrastructure(
             "$Default", cancellationToken);
 
         // TODO
-        // Create a rule that uses a sql filter and a rule action The SQL filter should subscribe to all message types
+        // 16. Create a rule that uses a sql filter and a rule action The SQL filter should subscribe to all message types
         // that are in the namespace "Processor" and override the label on matches with something
 
     }

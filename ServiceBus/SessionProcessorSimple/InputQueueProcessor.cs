@@ -17,7 +17,7 @@ public class InputQueueProcessor(
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         // TODO
-        // Create a session processor that auto completes messages, has maximum 10 concurrent sessions and a prefetch count of 10
+        // 5. Create a session processor that auto completes messages, has maximum 10 concurrent sessions and a prefetch count of 10
         queueProcessor = null;
         queueProcessor.ProcessMessageAsync += ProcessMessages;
         queueProcessor.ProcessErrorAsync += ProcessError;
@@ -53,10 +53,10 @@ public class InputQueueProcessor(
     async Task HandleProcessTemperatureChange(ProcessSessionMessageEventArgs arg, CancellationToken cancellationToken)
     {
         // TODO
-        // Deserialize the ProcessTemperatureChange command from the message
-        // Use ChannelState as a session state to durably store the last data points observed
-        // Implement the following algorithm:
-        // For every channel increase the number of data points observed by one if the temperature is above the threshold
+        // 6. Deserialize the ProcessTemperatureChange command from the message
+        // 7. Use ChannelState as a session state to durably store the last data points observed
+        // 8. Implement the following algorithm:
+        // 9. For every channel increase the number of data points observed by one if the temperature is above the threshold
         // when the temperature is below the threshold reset the number of data points observed back to zero
         // log something at information level when the data is below or above the threshold
         var message = arg.Message;

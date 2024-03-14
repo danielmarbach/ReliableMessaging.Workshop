@@ -16,7 +16,7 @@ public class SetupInfrastructure(
         }
 
         // TODO
-        // Create the queue with session support
+        // 10. Create the queue with session support
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

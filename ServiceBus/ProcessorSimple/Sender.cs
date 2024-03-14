@@ -25,7 +25,8 @@ public class Sender(
 
         await foreach (var batch in Batches(simulationCommands, commandSender, cancellationToken))
         {
-            // TODO Send a batch
+            // TODO
+            // 5. Send a batch
         }
     }
 
@@ -59,10 +60,10 @@ public class Sender(
             var command = queueCommands.Peek();
 
             // TODO
-            // Create a batch when currentBatch is null
-            // Try adding a a new ServiceBusMessage with the command as json content
-            // Use the channel id as message ID to make sure messages can be de-duplicated
-            // use the application properties to set the "MessageType" to the full name of the payload
+            // 1. Create a batch when currentBatch is null
+            // 2. Try adding a a new ServiceBusMessage with the command as json content
+            // 3. Use the channel id as message ID to make sure messages can be de-duplicated
+            // 4. Use the application properties to set the "MessageType" to the full name of the payload
             if (false)
             {
                 if (currentBatch.Count == 0)
