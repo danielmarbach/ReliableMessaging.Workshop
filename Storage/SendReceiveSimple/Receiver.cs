@@ -30,7 +30,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        cancellationTokenSource.Cancel();
+        await cancellationTokenSource.CancelAsync();
         while (concurrencyLimiter.CurrentCount != MaximumConcurrency)
         {
             await Task.Delay(50, CancellationToken.None).ConfigureAwait(false);
@@ -54,7 +54,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
 
             QueueMessage[]? messages = Array.Empty<QueueMessage>();
             // TODO
-            // Receive as many messages as needed
+            // 5. Receive as many messages as needed
             // HINT: concurrencyLimiter.CurrentCount
             foreach (var message in messages)
             {
@@ -83,7 +83,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
         try
         {
             // TODO
-            // Deserialize the Envelop with the ActivateSensor data
+            // 6. Deserialize the Envelop with the ActivateSensor data
 
             // Simulate some work
             await Task.Delay(workTime, cancellationToken);
@@ -93,12 +93,13 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
                 message = message.Update(updateReceipt);
             }
 
-            // TODO mark the message as processed
+            // TODO
+            // 7. Mark the message as processed
         }
         catch (OperationCanceledException)
         {
             // TODO
-            // When processing failed during shutdown try to make it immediately visible again.
+            // 8. When processing failed during shutdown try to make it immediately visible again.
         }
         catch(Exception ex) when(!cancellationToken.IsCancellationRequested)
         {
@@ -106,7 +107,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
         }
         finally
         {
-            coordinationTokenSource.Cancel();
+            await coordinationTokenSource.CancelAsync();
             coordinationTokenSource.Dispose();
             concurrencyLimiter.Release();
         }
@@ -123,7 +124,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
 
                 UpdateReceipt updateReceipt = null;
                 // TODO
-                // Update the visibility time of the message
+                // 9. Update the visibility time of the message
 
                 message = message.Update(updateReceipt);
                 sourceToPopReceipt.AddOrUpdate(coordinationTokenSource, updateReceipt);
