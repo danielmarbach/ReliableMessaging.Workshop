@@ -45,3 +45,13 @@ Bonus exercise:
 #### Running it
 
 `dotnet run -c Release`
+
+## Demo
+
+### RBAC
+
+1. Create a new Entra ID application `ServiceBusRBAC`
+1. Assign the API permission `Microsoft.ServiceBus` and give it full access to the Azure Service Bus service
+1. Create a Client secret `ServiceBusClientSecret` under Certificates & Secrets
+1. Create a queue with name `rbacqueue`
+1. Add a role assignment with `Azure Service Bus Data Sender` and add `ServiceBusRBAC` under members directly on the queue `rbacqueue` under Access control (IAM)
