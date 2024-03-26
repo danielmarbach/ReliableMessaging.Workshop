@@ -16,7 +16,7 @@ This is a Bring Your Own Device (BYOD) course. At BYOD courses, attendees are re
 
 Required:
 
-- .NET 7 or higher
+- .NET 8 or higher
 - Visual Studio/Rider/VS Code
 - VS Code Extension for Bicep
 
@@ -24,21 +24,22 @@ Optional:
 
 - Azure Service Bus Explorer
 - Azure Storage Explorer
-- Free ngrok account with a custom domain
+- Free ngrok account with a custom domain or a devtunnels account
 
 (*) Some Azure resources may be created and provided to attendees with connection strings on a limited basis.
 
 ## Time table (One Day Version)
 
-09:00 - 10:30 Storage Queues
-10:30 - 10:50 break
-10:50 - 12:30 Service Bus
-12:30 - 13:30 Lunch
-13:30 - 14:00 Service Bus
-14:00 - 15:00 Event Hubs
-15:00 - 15:20 break
-15:20 - 15:45 Event Hubs
-15:45 - 17:00 Event Grid
+| 09:00 - 10:30 | Storage Queues |
+|---------------|----------------|
+| 10:30 - 10:50 | break          |
+| 10:50 - 12:30 | Service Bus    |
+| 12:30 - 13:30 | Lunch          |
+| 13:30 - 14:00 | Service Bus    |
+| 14:00 - 15:00 | Event Hubs     |
+| 15:00 - 15:20 | break          |
+| 15:20 - 15:45 | Event Hubs     |
+| 15:45 - 17:00 | Event Grid     |
 
 ## Reading material
 
