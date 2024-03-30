@@ -1,0 +1,18 @@
+{
+  "namespace": "ProcessorSchemaDemo",
+  "type": "record",
+  "name": "TemperatureChanged",
+  "fields": [
+    {
+      "name": "Current",
+      "type": "double"
+    },
+    {
+      "name": "Published",
+      "type": {
+        "type": "int",
+        "logicalType": "date"
+      }
+    }
+  ]
+}

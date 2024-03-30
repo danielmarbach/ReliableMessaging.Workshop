@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ProcessorSchemaDemo": {
+      "commandName": "Project",
+      "dotnetRunMessages": true
+    }
+  }
+}

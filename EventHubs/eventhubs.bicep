@@ -93,7 +93,7 @@ resource SchemaGroup 'Microsoft.EventHub/namespaces/schemagroups@2023-01-01-prev
   properties: {
     groupProperties: {}
     schemaCompatibility: 'None'
-    schemaType: 'Json'
+    schemaType: 'Avro'
   }
 }
 

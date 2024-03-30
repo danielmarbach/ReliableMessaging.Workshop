@@ -25,3 +25,8 @@ Bonus exercise:
 #### Running it
 
 `dotnet run -c Release`
+
+## ProcessorSchemaDemo
+
+1. dotnet tool install --global Apache.Avro.Tools --version 1.11.3
+1. avrogen -s TemperatureChanged.avsc .
