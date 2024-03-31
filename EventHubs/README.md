@@ -30,3 +30,18 @@ Bonus exercise:
 
 1. dotnet tool install --global Apache.Avro.Tools --version 1.11.3
 1. avrogen -s TemperatureChanged.avsc .
+
+
+### RBAC
+
+Attention: The permissions here are generous for demo purposes only
+
+1. Create a new Entra ID application `EventHubsRBAC`
+1. Assign the API permission `Microsoft.EventHubs` and `Azure Storage`
+1. Create a Client secret `EventHubsClientSecret` under Certificates & Secrets
+1. Under the event hubs namespace under Access control (IAM)
+  1. Add a role assignment with `Azure Event Hubs Data Owner` and add `EventHubsRBAC` under members 
+  1. Add a role assignment with `Schema Registry Contributor (Preview)` and add `EventHubsRBAC` under members
+1. Under the storage account under Access control (IAM)
+  1. Add a role assignment with `Storage Blob Data Contributor` and add `EventHubsRBAC` under members
+1. Configure launchSettings.json accordingly  
