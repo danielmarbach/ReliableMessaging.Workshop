@@ -86,17 +86,6 @@ resource Topic 'Microsoft.EventHub/namespaces/eventhubs@2023-01-01-preview' = [f
   }
 }]
 
-
-resource SchemaGroup 'Microsoft.EventHub/namespaces/schemagroups@2023-01-01-preview' = {
-  parent: EventHubsNamespace
-  name: 'Schemas'
-  properties: {
-    groupProperties: {}
-    schemaCompatibility: 'None'
-    schemaType: 'Avro'
-  }
-}
-
 #disable-next-line outputs-should-not-contain-secrets
 output eventHubsConnectionString string = listKeys('${EventHubsNamespace.id}/AuthorizationRules/RootManageSharedAccessKey', EventHubsNamespace.apiVersion).primaryConnectionString
 #disable-next-line outputs-should-not-contain-secrets

@@ -1,5 +1,4 @@
 ﻿using Azure.Data.SchemaRegistry;
-using Azure.Identity;
 using Azure.Messaging.EventHubs.Primitives;
 using Azure.Storage.Blobs;
 using Microsoft.Azure.Data.SchemaRegistry.ApacheAvro;
@@ -7,12 +6,14 @@ using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 using ProcessorSchemaDemo;
 
+Console.WriteLine(Environment.GetEnvironmentVariable("AZURE_TENANT_ID"));
+
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddAzureClients(azureClientBuilder =>
 {
-    azureClientBuilder.AddBlobServiceClient(builder.Configuration.GetSection("StorageOptions")["ConnectionString"]);
-    azureClientBuilder.AddEventHubProducerClient(builder.Configuration.GetSection("EventHubs")["ConnectionString"], builder.Configuration.GetSection("EventHubs")["Name"]);
-    azureClientBuilder.AddSchemaRegistryClient(builder.Configuration.GetSection("EventHubs")["FullyQualifiedNamespace"], new DefaultAzureCredential());
+    azureClientBuilder.AddBlobServiceClient(new Uri(builder.Configuration.GetSection("StorageOptions")["ServiceUri"]));
+    azureClientBuilder.AddEventHubProducerClientWithNamespace(builder.Configuration.GetSection("EventHubs")["FullyQualifiedNamespace"], builder.Configuration.GetSection("EventHubs")["Name"]);
+    azureClientBuilder.AddSchemaRegistryClient(builder.Configuration.GetSection("EventHubs")["FullyQualifiedNamespace"]);
 });
 builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(nameof(StorageOptions)));
 builder.Services.Configure<SenderOptions>(builder.Configuration.GetSection(nameof(SenderOptions)));
@@ -27,7 +28,7 @@ builder.Services.AddSingleton<BatchProcessor>(provider =>
 {
     var eventHubs = provider.GetRequiredService<IConfiguration>().GetSection("EventHubs");
     return new BatchProcessor(provider.GetRequiredService<BlobCheckpointStore>(), eventBatchMaximumCount: 100, "$Default",
-        eventHubs["ConnectionString"]!, eventHubs["Name"]!, provider.GetRequiredService<ILogger<BatchProcessor>>());
+        eventHubs["FullyQualifiedNamespace"]!, eventHubs["Name"]!, provider.GetRequiredService<ILogger<BatchProcessor>>());
 });
 builder.Services.AddSingleton<SchemaRegistryAvroSerializer>(provider => new SchemaRegistryAvroSerializer(provider.GetRequiredService<SchemaRegistryClient>(), provider.GetRequiredService<IOptions<SerializerOptions>>().Value.SchemaGroup));
 

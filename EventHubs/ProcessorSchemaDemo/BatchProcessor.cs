@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Primitives;
 
@@ -7,15 +8,16 @@ public sealed class BatchProcessor(
     CheckpointStore checkpointStore,
     int eventBatchMaximumCount,
     string consumerGroup,
-    string connectionString,
+    string fullyQualifiedNamespace,
     string eventHubName,
     ILogger<BatchProcessor> logger,
     EventProcessorOptions? clientOptions = default)
     : PluggableCheckpointStoreEventProcessor<EventProcessorPartition>(checkpointStore,
         eventBatchMaximumCount,
         consumerGroup,
-        connectionString,
+        fullyQualifiedNamespace,
         eventHubName,
+        new DefaultAzureCredential(),
         clientOptions)
 {
     public Func<IReadOnlyList<EventData>, Task> ProcessEventAsync { get; set; } = data => Task.CompletedTask;
