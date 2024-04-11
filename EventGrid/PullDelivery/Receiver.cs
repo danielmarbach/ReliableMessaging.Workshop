@@ -45,21 +45,21 @@ public class Receiver(
         {
             logger.Releasing(toRelease.Count);
             // ignoring the result because it is a demo
-            _ = await eventGridClient.ReleaseCloudEventsAsync(topicName, subscriptionName, toRelease, stoppingToken);
+            _ = await eventGridClient.ReleaseCloudEventsAsync(topicName, subscriptionName, new ReleaseOptions(toRelease), cancellationToken: stoppingToken);
         }
 
         if (toAcknowledge.Count > 0)
         {
             logger.Acknowledge(toAcknowledge.Count);
             // ignoring the result because it is a demo
-            _ = await eventGridClient.AcknowledgeCloudEventsAsync(topicName, subscriptionName, toAcknowledge, stoppingToken);
+            _ = await eventGridClient.AcknowledgeCloudEventsAsync(topicName, subscriptionName, new AcknowledgeOptions(toAcknowledge), stoppingToken);
         }
 
         if (toReject.Count > 0)
         {
             logger.Reject(toReject.Count);
             // ignoring the result because it is a demo
-            _ = await eventGridClient.RejectCloudEventsAsync(topicName, subscriptionName, toReject, stoppingToken);
+            _ = await eventGridClient.RejectCloudEventsAsync(topicName, subscriptionName, new RejectOptions(toReject), stoppingToken);
         }
     }
 }
