@@ -105,7 +105,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
         }
         finally
         {
-            coordinationTokenSource.Cancel();
+            await coordinationTokenSource.CancelAsync();
             coordinationTokenSource.Dispose();
             concurrencyLimiter.Release();
         }
