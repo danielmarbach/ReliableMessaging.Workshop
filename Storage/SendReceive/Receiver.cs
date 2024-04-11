@@ -55,9 +55,10 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
             foreach (var message in messages)
             {
                 var coordinationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                var coordinationToken = coordinationTokenSource.Token;
 
-                _ = RenewLease(message, coordinationTokenSource, coordinationTokenSource.Token);
-                _ = HandleMessage(message, coordinationTokenSource, cancellationToken);
+                _ = RenewLease(message, coordinationTokenSource, coordinationToken);
+                _ = HandleMessage(message, coordinationTokenSource, coordinationToken);
             }
 
             if (messages.Length == 0)
