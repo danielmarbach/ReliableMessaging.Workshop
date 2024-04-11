@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessorSimple", "Processo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionProcessorSimple", "SessionProcessorSimple\SessionProcessorSimple.csproj", "{71D8E8BA-21AD-4BA7-B5C2-2852447A2C30}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBusRBAC", "ServiceBusRBAC\ServiceBusRBAC.csproj", "{9900FB80-84B6-4800-8209-B230FEB8B054}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{71D8E8BA-21AD-4BA7-B5C2-2852447A2C30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71D8E8BA-21AD-4BA7-B5C2-2852447A2C30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71D8E8BA-21AD-4BA7-B5C2-2852447A2C30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9900FB80-84B6-4800-8209-B230FEB8B054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9900FB80-84B6-4800-8209-B230FEB8B054}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9900FB80-84B6-4800-8209-B230FEB8B054}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9900FB80-84B6-4800-8209-B230FEB8B054}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
