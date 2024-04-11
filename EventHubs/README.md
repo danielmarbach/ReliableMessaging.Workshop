@@ -30,7 +30,10 @@ Bonus exercise:
 
 1. dotnet tool install --global Apache.Avro.Tools --version 1.11.3
 1. avrogen -s TemperatureChanged.avsc .
-
+1. Register the schema in the schema registry
+1. Send a bit of data and then change the schema version and run again
+1. Delete the first version to make it incompatible and run again to show how the sender fails (mention validation callbacks in later versions that are still preview)
+1. Introduce a new version that is compatible again.  
 
 ### RBAC
 
