@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "ServiceBusRBAC": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "AZURE_TENANT_ID": "TBD",
+        "AZURE_CLIENT_ID": "TBD",
+        "AZURE_CLIENT_SECRET": "TBD",
+        "SERVICE_BUS_FULLY_QUALIFIED_NAMESPACE": "TBD"
+      }
+    }
+  }
+}
