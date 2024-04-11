@@ -54,3 +54,5 @@ Optional:
 ### Event Grid
 
 - [Debugging Azure Function Event Grid Triggers Locally with JetBrains Rider ](https://www.josephguadagno.net/2020/07/20/debugging-azure-function-event-grid-trigger-locally-with-jetbrains-rider)
+- [Azure Service Bus vs Event Grid](https://yourazurecoach.com/2021/08/11/azure-service-bus-vs-event-grid/)
+- [Azure Service Bus vs Event Grid Pull Delivery](https://yourazurecoach.com/2023/12/22/azure-service-bus-vs-event-grid-pull-delivery/)
