@@ -63,18 +63,23 @@ Alternatively it is possible to use Dev-Tunnles
 ##### NGrok
 
 1. Setup ngrok "tunneling" with `ngrok http --domain=customdomain.ngrok-free.app 8080 --host-header=rewrite` (assuming the solution runs on port 8080 locally, replace `customdomain` with your custom domain)
+1. Modify  `eventgrid-push.bicep`
+  1. Replace the `endpointUrl` value with the custom domain URI
+  1. Remove `deliveryAttributeMappings` in the `EventGridSubscription` since it is not necessary 
 
 ##### Dev Tunnels
 
 1. Setup devtunnel with `devtunnel host -p 8080 --allow-anonymous` with anonymous access _or_
 1. Setup devtunnel with `devtunnel host -p 8080` and note down the tunnel id
 1. Create an access token `devtunnel token <tunnelI-d> --scope connect`
-1. Add your token to the `X-Tunnel-Authorization` value
+1. Modify  `eventgrid-push.bicep`
+  1. Replace `endpointUrl` value with the dev tunnel URI
+  1. Add your token to the `X-Tunnel-Authorization` value `<token>`
 
 ##### Deploy
 
 1. Use `eventgrid-push.bicep` to deploy (adjust the necessary parameters or [create a parameter file](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/parameter-files)). Make sure to at least replace the `endpointUrl` to your ngrok or dev tunnel.
-1. Send messages into the configured queue either writing some code or use [ServiceBus Explorer](https://github.com/paolosalvatori/ServiceBusExplorer) to send messages.
+1. Send messages into the configured queue either by writing some code or use [ServiceBus Explorer](https://github.com/paolosalvatori/ServiceBusExplorer) to send messages.
 
 #### Reading material
 
