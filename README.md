@@ -31,7 +31,6 @@ Optional:
 ## Time table (One Day Version)
 
 | 09:00 - 10:30 | Storage Queues |
-|---------------|----------------|
 | 10:30 - 10:50 | break          |
 | 10:50 - 12:30 | Service Bus    |
 | 12:30 - 13:30 | Lunch          |
@@ -40,6 +39,28 @@ Optional:
 | 15:00 - 15:20 | break          |
 | 15:20 - 15:45 | Event Hubs     |
 | 15:45 - 17:00 | Event Grid     |
+
+## Time table (Two Day Version)
+
+### First Day
+
+| 09:00-10:15   | Storage Queues |
+| 10:15 - 10:30 | break          |
+| 10:30 - 12:00 | Storage Queues |
+| 12:00 - 13:00 | Lunch          |
+| 13:00 - 15:00 | Service Bus    |
+| 15:00 - 15:15 | break          |
+| 15:15 - 17:00 | Service Bus    |
+
+### Second Day
+
+| 09:00-10:15   | Event Hubs |
+| 10:15 - 10:30 | break      |
+| 10:30 - 12:00 | Event Hubs |
+| 12:00 - 13:00 | Lunch      |
+| 13:00 - 15:00 | Event Grid |
+| 15:00 - 15:15 | break      |
+| 15:15 - 17:00 | Event Grid |
 
 ## Reading material
 
