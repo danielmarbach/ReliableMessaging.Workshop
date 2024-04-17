@@ -13,6 +13,8 @@ Bonus exercise:
 - Given the rather tight restrictions about the payload size how would you implement offloading the body to for example a blob storage?
 - Given the message visibility timeout what are the consequences of potential unclean restarts of a receiver?
 - In order to improve the receive speed when the queues are full can you imagine a better way of receiving messages that has an optimal balance between polling, not incurring too much costs during idle time and increasing the throughput on busy queues?
+- You need to store a small set of metadata that is unique per queue. How would you achieve that? What are the limitations?
+- Is it possible to retrieve runtime information like the message count with StorageQueues? How would you achieve that?
 
 ## Solutions
 
