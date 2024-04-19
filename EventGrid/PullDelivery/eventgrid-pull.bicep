@@ -1,9 +1,11 @@
 param location string = resourceGroup().location
-param namespaceName string = 'EventGridNamespace1'
+param eventGridNamespaceNames array = [
+  'EventGridNamespace1'
+]
 param subscriptionName string = 'TemperatureChangedSubscription'
 param topicName string = 'TemperatureChanged'
 
-resource EventGridNamespace 'Microsoft.EventGrid/namespaces@2023-06-01-preview' = {
+resource EventGridNamespace 'Microsoft.EventGrid/namespaces@2023-06-01-preview' = [for name in eventGridNamespaceNames: {
   properties: {
     topicsConfiguration: {}
     isZoneRedundant: true
@@ -19,21 +21,20 @@ resource EventGridNamespace 'Microsoft.EventGrid/namespaces@2023-06-01-preview' 
   }
   location: location
   tags: {}
-  name: namespaceName
-}
+  name: toLower(name)
+}]
 
-resource EventGridTopic 'Microsoft.EventGrid/namespaces/topics@2023-06-01-preview' = {
+resource EventGridTopic 'Microsoft.EventGrid/namespaces/topics@2023-06-01-preview' = [for (name, i) in eventGridNamespaceNames: {
   properties: {
     publisherType: 'Custom'
     inputSchema: 'CloudEventSchemaV1_0'
     eventRetentionInDays: 1
   }
-  parent: EventGridNamespace
+  parent: EventGridNamespace[i]
   name: topicName
-}
+}]
 
-
-resource EventGridSubscription 'Microsoft.EventGrid/namespaces/topics/eventSubscriptions@2023-06-01-preview' = {
+resource EventGridSubscription 'Microsoft.EventGrid/namespaces/topics/eventSubscriptions@2023-06-01-preview' = [for (name, i) in eventGridNamespaceNames: {
   properties: {
     deliveryConfiguration: {
       deliveryMode: 'Queue'
@@ -48,12 +49,13 @@ resource EventGridSubscription 'Microsoft.EventGrid/namespaces/topics/eventSubsc
       includedEventTypes: []
     }
   }
-  parent: EventGridTopic
+  parent: EventGridTopic[i]
   name: subscriptionName
-}
+}]
 
-var eventGridAccessKey = EventGridNamespace.listKeys().key1
-
-output eventGridAccessKey string = eventGridAccessKey
-output eventGridName string = EventGridNamespace.name
-output eventGridHostName string = 'https://${EventGridNamespace.properties.topicsConfiguration.hostname}'
+output deployedEventGridNamespaces array = [for (name, i) in eventGridNamespaceNames: {
+  name: name
+  #disable-next-line outputs-should-not-contain-secrets
+  eventGridAccessKey: EventGridNamespace[i].listKeys().key1
+  eventGridHostName: 'https://${EventGridNamespace[i].properties.topicsConfiguration.hostname}'
+}]
