@@ -16,7 +16,7 @@ This is a Bring Your Own Device (BYOD) course. At BYOD courses, attendees are re
 
 Required:
 
-- .NET 8 or higher
+- .NET 8
 - Visual Studio/Rider/VS Code
 - VS Code Extension for Bicep
 
@@ -61,6 +61,10 @@ Optional:
 | 13:00 - 15:00 | Event Grid |
 | 15:00 - 15:15 | break      |
 | 15:15 - 17:00 | Event Grid |
+
+## Connections
+
+https://t.ly/mPMrU
 
 ## Reading material
 
