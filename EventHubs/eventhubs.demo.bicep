@@ -53,8 +53,8 @@ resource Containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2
 
 resource EventHubsNamespace 'Microsoft.EventHub/namespaces@2023-01-01-preview' = {
   sku: {
-    name: 'Standard'
-    tier: 'Standard'
+    name: 'Premium'
+    tier: 'Premium'
     capacity: 1
   }
   identity: {
@@ -67,8 +67,6 @@ resource EventHubsNamespace 'Microsoft.EventHub/namespaces@2023-01-01-preview' =
     publicNetworkAccess: 'Enabled'
     disableLocalAuth: false
     zoneRedundant: true
-    isAutoInflateEnabled: true
-    maximumThroughputUnits: 10
     kafkaEnabled: true
   }
 }
