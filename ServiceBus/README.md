@@ -4,6 +4,8 @@
 
 ### Processor (Simple)
 
+![](azure-service-bus-processor.jpg)
+
 Address all `// TODO` in the code.
 
 Bonus exercise:
