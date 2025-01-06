@@ -60,7 +60,43 @@ Bonus exercise:
 
 ### SessionProcessor (Simple)
 
+#### Overview
+
 ![](azure-service-bus-session-processor.jpg)
+
+#### Sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User/System
+    participant Sender as Sender
+    participant InputQueue as InputQueueProcessor
+    participant ServiceBus as Azure Service Bus
+
+    User->>Sender: StartAsync
+    Sender->>ServiceBus: CreateSender(InputQueue)
+    loop For each channel in Channels
+        Sender->>Sender: CreateSimulationCommands()
+        loop For each batch in simulation commands
+            Sender->>ServiceBus: SendMessagesAsync(batch with SessionId=channel)
+        end
+    end
+    Sender->>Sender: StopAsync (Terminate)
+
+    User->>InputQueue: StartAsync
+    InputQueue->>ServiceBus: CreateSessionProcessor(InputQueue)
+    ServiceBus->>InputQueue: Session Message Received
+    InputQueue->>InputQueue: ProcessMessages
+    InputQueue->>InputQueue: HandleProcessTemperatureChange
+    InputQueue->>InputQueue: Retrieve SessionState
+    InputQueue->>InputQueue: Update ChannelState
+    InputQueue->>InputQueue: Log Temperature Data
+    InputQueue->>ServiceBus: Update SessionState
+    InputQueue->>InputQueue: StopAsync (Terminate)
+```
+
+#### Instructions
 
 Address all `// TODO` in the code.
 
