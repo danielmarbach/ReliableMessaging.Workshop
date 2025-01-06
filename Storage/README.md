@@ -4,6 +4,37 @@
 
 ### Send and Receive
 
+```mermaid
+sequenceDiagram
+    actor Sender
+    actor Receiver
+    participant QueueClient
+    participant QueueService
+    participant Message
+
+    Sender->>QueueClient: CreateIfNotExistsAsync()
+    loop Send Messages
+        Sender->>QueueClient: SendMessageAsync()
+    end
+
+    Receiver->>QueueClient: CreateIfNotExistsAsync()
+    Receiver->>QueueService: ReceiveMessagesAsync()
+    alt Messages Found
+        loop Process Messages
+            Receiver->>QueueService: Lock Message (visibilityTimeout)
+            Receiver->>Message: Process Message
+            par Concurrent Processing (SemaphoreSlim)
+                Receiver->>QueueService: UpdateMessageAsync (renew visibilityTimeout)
+                Receiver->>Message: Continue Processing
+            end
+            Receiver->>QueueService: DeleteMessageAsync()
+        end
+    else No Messages
+        Receiver->>Receiver: Delay (Backoff Algorithm)
+    end
+    Receiver->>QueueService: StopAsync (Cancel Receiving)
+```
+
 Address all `// TODO` in the code.
 
 Bonus exercise:
