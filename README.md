@@ -45,22 +45,24 @@ Optional:
 
 ### First Day
 
-| 09:00-10:15   | Storage Queues |
-| 10:15 - 10:30 | break          |
+| 09:00-10:15 | Storage Queues |
+|---|---|
+| 10:15 - 10:30 | break |
 | 10:30 - 12:00 | Storage Queues |
-| 12:00 - 13:00 | Lunch          |
-| 13:00 - 15:00 | Service Bus    |
-| 15:00 - 15:15 | break          |
-| 15:15 - 17:00 | Service Bus    |
+| 12:00 - 13:00 | Lunch |
+| 13:00 - 15:00 | Service Bus |
+| 15:00 - 15:15 | break |
+| 15:15 - 17:00 | Service Bus |
 
 ### Second Day
 
-| 09:00-10:15   | Event Hubs |
-| 10:15 - 10:30 | break      |
+| 09:00-10:15 | Event Hubs |
+|---|---|
+| 10:15 - 10:30 | break |
 | 10:30 - 12:00 | Event Hubs |
-| 12:00 - 13:00 | Lunch      |
+| 12:00 - 13:00 | Lunch |
 | 13:00 - 15:00 | Event Grid |
-| 15:00 - 15:15 | break      |
+| 15:00 - 15:15 | break |
 | 15:15 - 17:00 | Event Grid |
 
 ## Connections
