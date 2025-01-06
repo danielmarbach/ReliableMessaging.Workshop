@@ -4,6 +4,12 @@
 
 ### Send and Receive
 
+#### Overview
+
+![](azure-storage-queue-processor.jpg)
+
+#### Sequence
+
 ```mermaid
 sequenceDiagram
     actor Sender
@@ -34,6 +40,8 @@ sequenceDiagram
     end
     Receiver->>QueueService: StopAsync (Cancel Receiving)
 ```
+
+#### Instructions
 
 Address all `// TODO` in the code.
 
