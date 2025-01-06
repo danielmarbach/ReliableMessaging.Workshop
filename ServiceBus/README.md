@@ -4,7 +4,51 @@
 
 ### Processor (Simple)
 
+#### Overview
+
 ![](azure-service-bus-processor.jpg)
+
+#### Sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User/System
+    participant Sender as Sender
+    participant InputQueue as InputQueueProcessor
+    participant DestinationQueue as DestinationProcessor
+
+    User->>Sender: StartAsync
+    Sender->>ServiceBus: CreateSender(InputQueue)
+    Sender->>Sender: CreateSimulationCommands()
+    loop For each batch
+        Sender->>ServiceBus: SendMessagesAsync(batch)
+    end
+    Sender->>Sender: StopAsync (Terminate)
+
+    User->>InputQueue: StartAsync
+    InputQueue->>ServiceBus: CreateProcessor(InputQueue)
+    ServiceBus->>InputQueue: Message Received (ActivateSensor)
+    InputQueue->>InputQueue: ProcessMessages
+    InputQueue->>InputQueue: HandleActivateSensor
+    InputQueue->>ServiceBus: SendMessageAsync(SensorActivated)
+    loop If required
+        InputQueue->>InputQueue: Delay
+    end
+    InputQueue->>InputQueue: TransactionScope Complete
+    InputQueue->>InputQueue: HandleSensorActivated (if any)
+    InputQueue->>InputQueue: StopAsync (Terminate)
+
+    User->>DestinationQueue: StartAsync
+    DestinationQueue->>ServiceBus: CreateProcessor(DestinationQueue)
+    ServiceBus->>DestinationQueue: Message Received (SensorActivated)
+    DestinationQueue->>DestinationQueue: ProcessMessages
+    DestinationQueue->>DestinationQueue: HandleSensorActivated
+    DestinationQueue->>DestinationQueue: Increment sensorActivatedCounter
+    DestinationQueue->>DestinationQueue: StopAsync (Terminate)
+```
+
+#### Instructions
 
 Address all `// TODO` in the code.
 
