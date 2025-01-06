@@ -16,6 +16,8 @@ Bonus exercise:
 
 ### SessionProcessor (Simple)
 
+![](azure-service-bus-session-processor.jpg)
+
 Address all `// TODO` in the code.
 
 Bonus exercise:
