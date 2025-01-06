@@ -31,14 +31,15 @@ Optional:
 ## Time table (One Day Version)
 
 | 09:00 - 10:30 | Storage Queues |
-| 10:30 - 10:50 | break          |
-| 10:50 - 12:30 | Service Bus    |
-| 12:30 - 13:30 | Lunch          |
-| 13:30 - 14:00 | Service Bus    |
-| 14:00 - 15:00 | Event Hubs     |
-| 15:00 - 15:20 | break          |
-| 15:20 - 15:45 | Event Hubs     |
-| 15:45 - 17:00 | Event Grid     |
+|---|---|
+| 10:30 - 10:50 | break |
+| 10:50 - 12:30 | Service Bus |
+| 12:30 - 13:30 | Lunch |
+| 13:30 - 14:00 | Service Bus |
+| 14:00 - 15:00 | Event Hubs |
+| 15:00 - 15:20 | break |
+| 15:20 - 15:45 | Event Hubs |
+| 15:45 - 17:00 | Event Grid |
 
 ## Time table (Two Day Version)
 
