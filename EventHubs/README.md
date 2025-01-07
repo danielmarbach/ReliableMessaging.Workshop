@@ -4,6 +4,54 @@
 
 ### Processor (Simple)
 
+#### Overview
+
+![](azure-event-hubs-processor.jpg)
+
+#### Sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User/System
+    participant Sender as Sender
+    participant EventHub as Event Hub
+    participant Processor as Processor
+    participant BatchProcessor as BatchProcessor
+    participant BlobStorage as Blob Container (Checkpoint Store)
+
+    User->>Sender: StartAsync
+    Sender->>Sender: Check ProduceData Flag
+    loop For each Channel
+        Sender->>Sender: CreateSimulationData
+        loop For each Batch
+            Sender->>EventHub: SendAsync(batch)
+        end
+    end
+    Sender->>Sender: StopAsync (Terminate)
+
+    User->>Processor: StartAsync
+    Processor->>BlobStorage: RestartFromBeginningIfNecessary
+    Processor->>BatchProcessor: StartProcessingAsync
+
+    EventHub->>BatchProcessor: Event Batch Received
+    BatchProcessor->>BatchProcessor: OnProcessingEventBatchAsync
+    BatchProcessor->>Processor: Invoke ProcessEventAsync
+    loop For each Event in Batch
+        Processor->>Processor: Update Channel Observations
+        Processor->>Processor: Log Temperature
+    end
+    BatchProcessor->>BlobStorage: UpdateCheckpoint
+    BatchProcessor->>BatchProcessor: Handle Errors (if any)
+    BatchProcessor->>Processor: Processing Completed
+    Processor->>Processor: StopAsync (Terminate)
+
+    User->>BatchProcessor: OnProcessingErrorAsync (If needed)
+    BatchProcessor->>Processor: Log Error
+```
+
+#### Instructions
+
 Address all `// TODO` in the code.
 
 Bonus exercise:
