@@ -4,6 +4,59 @@
 
 ### Pull Delivery (Simple)
 
+#### Overview
+
+![](azure-event-grid-pull-delivery.jpg)
+
+#### Sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User/System
+    participant Sender as Sender
+    participant EventGrid as Event Grid
+    participant Receiver as Receiver
+
+    User->>Sender: StartAsync
+    loop Create CloudEvents (100 events)
+        Sender->>Sender: Generate TemperatureChanged Events
+    end
+    Sender->>EventGrid: PublishCloudEventsAsync(TopicName, TemperatureChanged Events)
+    Sender->>Sender: StopAsync (Terminate)
+
+    User->>Receiver: StartAsync
+    loop Stream Events
+        EventGrid->>Receiver: StreamCloudEvents(SubscriptionName, MaxEvents: 100)
+        Receiver->>Receiver: Process Events
+        loop For each Event
+            alt Source: ChannelA and Current > 25
+                Receiver->>Receiver: Add LockToken to Release List
+                Receiver->>Receiver: Log TemperatureChanged Event
+            else Source: ChannelA and Current <= 25
+                Receiver->>Receiver: Add LockToken to Acknowledge List
+            else Unknown Source
+                Receiver->>Receiver: Add LockToken to Reject List
+            end
+        end
+    end
+    alt Release Events
+        Receiver->>EventGrid: ReleaseCloudEventsAsync(TopicName, SubscriptionName, ReleaseOptions)
+        Receiver->>Receiver: Log Released Events
+    end
+    alt Acknowledge Events
+        Receiver->>EventGrid: AcknowledgeCloudEventsAsync(TopicName, SubscriptionName, AcknowledgeOptions)
+        Receiver->>Receiver: Log Acknowledged Events
+    end
+    alt Reject Events
+        Receiver->>EventGrid: RejectCloudEventsAsync(TopicName, SubscriptionName, RejectOptions)
+        Receiver->>Receiver: Log Rejected Events
+    end
+    Receiver->>Receiver: StopAsync (Terminate)
+```
+
+#### Instructions
+
 Address all `// TODO` in the code.
 
 Bonus exercise:
