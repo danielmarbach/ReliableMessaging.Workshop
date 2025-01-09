@@ -66,6 +66,48 @@ Could you implement a simple task queue with Event Grid Pull that operates simil
 
 ### Push Delivery (Simple)
 
+#### Overview
+
+![](azure-event-grid-push-delivery.jpg)
+
+#### Sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User/System
+    participant ServiceBus as Service Bus Queue
+    participant EventGrid as Event Grid
+    participant Webhook as Webhook Endpoint (/api/EventGridEventHandler)
+    participant Queue as Work Queue
+    participant Worker as ServiceBusBackgroundWorker
+    participant Logger as Logging System
+
+    User->>ServiceBus: Publish Messages (Producers)
+    ServiceBus->>EventGrid: Trigger ActiveMessagesAvailableWithNoListeners Event
+    EventGrid->>Webhook: Push Event (CloudEvent with Queue Info)
+
+    Webhook->>Webhook: Parse CloudEvent
+    alt EntityType is Queue
+        Webhook->>Queue: Enqueue FetchMessagesFromQueue (QueueName)
+    else Unsupported EntityType
+        Webhook->>Logger: Log Unsupported Event
+    end
+
+    Worker->>Queue: Read FetchMessagesFromQueue
+    loop For each FetchMessagesFromQueue
+        Worker->>ServiceBus: ReceiveMessagesAsync (QueueName)
+        ServiceBus->>Worker: Deliver Batch of Messages
+        Worker->>Logger: Log "Starting processing"
+        loop For each Message in Batch
+            Worker->>Logger: Log HandledMessage(Message Body)
+        end
+        Worker->>Logger: Log "Stopping processing"
+    end
+```
+
+#### Instructions
+
 Address all `// TODO` in the code.
 
 Bonus exercise:
