@@ -33,6 +33,9 @@ public class KafkaProcessor(
             SaslOauthbearerClientId = Environment.GetEnvironmentVariable("AZURE_CLIENT_ID"),
             SaslOauthbearerClientSecret = Environment.GetEnvironmentVariable("AZURE_CLIENT_SECRET"),
             SaslOauthbearerScope = $"https://{eventHubsOptions.Value.FullyQualifiedNamespace}/.default",
+            // Every AutoCommitIntervalMs milliseconds, the Confluent.Kafka client will commit the latest offsets for all partitions it has polled. Those offsets are stored in Kafka’s internal __consumer_offsets topic.
+            EnableAutoCommit = true, // default is true,
+            AutoCommitIntervalMs = 5000, // default is 5000,
             AutoOffsetReset = processorOptions.Value.RestartFromBeginning
                 ? AutoOffsetReset.Earliest : AutoOffsetReset.Latest,
             //BrokerVersionFallback = "1.0.0",
@@ -65,6 +68,9 @@ public class KafkaProcessor(
                 (CurrentTemperature: temperatureChanged.Current, TemperatureThreshold: processorOptions.Value.TemperatureThreshold));
 
             logger.LogTemperature(numberOfDataPointsObserved, channel, temperatureChanged, processorOptions.Value);
+
+            // or manually
+            // consumer.Commit(consumeResult);
         }
     }
 
