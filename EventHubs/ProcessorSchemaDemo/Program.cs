@@ -34,7 +34,7 @@ builder.Services.AddSingleton<BatchProcessor>(provider =>
 builder.Services.AddSingleton<SchemaRegistryAvroSerializer>(provider => new SchemaRegistryAvroSerializer(provider.GetRequiredService<SchemaRegistryClient>(), provider.GetRequiredService<IOptions<SerializerOptions>>().Value.SchemaGroup));
 
 builder.Services.AddHostedService<SetupInfrastructure>();
-//builder.Services.AddHostedService<Sender>();
+builder.Services.AddHostedService<Sender>();
 builder.Services.AddHostedService<Processor>();
 //builder.Services.AddHostedService<KafkaProcessor>();
 
