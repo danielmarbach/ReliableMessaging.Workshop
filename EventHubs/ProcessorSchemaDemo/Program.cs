@@ -19,6 +19,7 @@ builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(name
 builder.Services.Configure<SenderOptions>(builder.Configuration.GetSection(nameof(SenderOptions)));
 builder.Services.Configure<ProcessorOptions>(builder.Configuration.GetSection(nameof(ProcessorOptions)));
 builder.Services.Configure<SerializerOptions>(builder.Configuration.GetSection(nameof(SerializerOptions)));
+builder.Services.Configure<EventHubsOptions>(builder.Configuration.GetSection("EventHubs"));
 
 builder.Services.AddSingleton<BlobContainerClient>(provider =>
     provider.GetRequiredService<BlobServiceClient>().GetBlobContainerClient(provider.GetRequiredService<IOptions<StorageOptions>>().Value.ContainerName));
@@ -33,8 +34,9 @@ builder.Services.AddSingleton<BatchProcessor>(provider =>
 builder.Services.AddSingleton<SchemaRegistryAvroSerializer>(provider => new SchemaRegistryAvroSerializer(provider.GetRequiredService<SchemaRegistryClient>(), provider.GetRequiredService<IOptions<SerializerOptions>>().Value.SchemaGroup));
 
 builder.Services.AddHostedService<SetupInfrastructure>();
-builder.Services.AddHostedService<Sender>();
-builder.Services.AddHostedService<ProcessorSchemaDemo.Processor>();
+//builder.Services.AddHostedService<Sender>();
+builder.Services.AddHostedService<Processor>();
+//builder.Services.AddHostedService<KafkaProcessor>();
 
 var host = builder.Build();
 await host.RunAsync();
