@@ -139,3 +139,10 @@ Bonus exercise:
 1. Create a Client secret `ServiceBusClientSecret` under Certificates & Secrets
 1. Create a queue with name `rbacqueue`
 1. Add a role assignment with `Azure Service Bus Data Sender` and add `ServiceBusRBAC` under members directly on the queue `rbacqueue` under Access control (IAM)
+
+### Autoscale
+
+[Demo](https://github.com/danielmarbach/AzureServiceBusTopologyComparison)
+
+1. Set auto scale threshold of 60% CPU for a few min
+1. SQL Filter with 4 levels of hierarchy and throughput of 350 should trigger it 
