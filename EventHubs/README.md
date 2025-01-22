@@ -108,4 +108,9 @@ Attention: The permissions here are generous for demo purposes only
 #### Application Groups
 
 1. Add an application group and allow one message per second incoming
-2. Change application group to allow more messages per second  
+1. Change application group to allow more messages per second  (or even better remove things again because caching can mess up things)
+
+#### Kafka Consumer
+
+1. Recreate the topicdemo event hubs if you played around with schemas otherwise you run into schema not found problems
+1. Delete the blob storage data and start fresh
