@@ -23,7 +23,7 @@ static partial class LoggingExtensions
         Level = LogLevel.Information,
         Message = "Locks {lockTokens} renewed. Succeeded {succeeded}. Failed {failed}")]
     public static partial void LocksRenewed(
-        this ILogger logger, string[] lockTokens, IReadOnlyList<string> succeeded, IEnumerable<string> failed, [TagProvider(typeof(RenewCloudEventLocksResultTagProvider), nameof(RenewCloudEventLocksResultTagProvider.RecordTags))] RenewCloudEventLocksResult result);
+        this ILogger logger, string[] lockTokens, IReadOnlyList<string> succeeded, IEnumerable<string> failed, [TagProvider(typeof(RenewLocksResultTagProvider), nameof(RenewLocksResultTagProvider.RecordTags))] RenewLocksResult result);
     
     [LoggerMessage(
         EventId = 4,

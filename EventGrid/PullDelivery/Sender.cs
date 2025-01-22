@@ -4,18 +4,16 @@ using Microsoft.Extensions.Options;
 
 namespace PullDelivery;
 
-public class Sender(EventGridClient eventGridClient, IOptions<EventGridOptions> eventGridOptions)
+public class Sender(EventGridSenderClient eventGridClient)
     : IHostedService
 {
-    private readonly string topicName = eventGridOptions.Value.TopicName;
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var temperatureChanged = new List<CloudEvent>();
         var yesterday = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(1));
         for (var i = 0; i < 100; i++)
         {
-            temperatureChanged.Add(new("ChannelA", "ReliableMessaging.Workshop.TemperatureChanged",
+            temperatureChanged.Add(new CloudEvent("ChannelA", "ReliableMessaging.Workshop.TemperatureChanged",
                 new TemperatureChanged
                 {
                     Published = yesterday.Add(TimeSpan.FromMinutes(i)),
@@ -23,7 +21,7 @@ public class Sender(EventGridClient eventGridClient, IOptions<EventGridOptions> 
                 }));
         }
 
-        await eventGridClient.PublishCloudEventsAsync(topicName, temperatureChanged, cancellationToken);
+        await eventGridClient.SendAsync(temperatureChanged, cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Azure.Messaging.EventGrid.Namespaces" />
         <PackageReference Include="Microsoft.Extensions.Hosting" />
-        <PackageReference Include="Azure.Messaging.EventGrid" />
         <PackageReference Include="Azure.Identity" />
         <PackageReference Include="Microsoft.Extensions.Azure" />
     </ItemGroup>

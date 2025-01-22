@@ -2,9 +2,9 @@ using Azure.Messaging.EventGrid.Namespaces;
 
 namespace PullDeliveryDemo;
 
-public static class RenewCloudEventLocksResultTagProvider
+public static class RenewLocksResultTagProvider
 {
-    public static void RecordTags(ITagCollector collector, RenewCloudEventLocksResult forecast)
+    public static void RecordTags(ITagCollector collector, RenewLocksResult forecast)
     {
         for (var index = 0; index < forecast.SucceededLockTokens.Count; index++)
         {

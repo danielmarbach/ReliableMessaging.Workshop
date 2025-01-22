@@ -8,8 +8,8 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddAzureClients(azureClientBuilder =>
 {
     azureClientBuilder.AddBlobServiceClient(builder.Configuration.GetSection("StorageOptions")["ConnectionString"]);
-    // This is a bit of a quirk in the beta builds :(
-    EventGridClientBuilderExtensions.AddEventGridClient(azureClientBuilder, new Uri(builder.Configuration.GetSection("EventGridOptions")["Endpoint"]), new AzureKeyCredential(builder.Configuration.GetSection("EventGridOptions")["AccessKey"]));
+    azureClientBuilder.AddEventGridSenderClient(new Uri(builder.Configuration.GetSection("EventGridOptions")["Endpoint"]), builder.Configuration.GetSection("EventGridOptions")["TopicName"], new AzureKeyCredential(builder.Configuration.GetSection("EventGridOptions")["AccessKey"]));
+    azureClientBuilder.AddEventGridReceiverClient(new Uri(builder.Configuration.GetSection("EventGridOptions")["Endpoint"]), builder.Configuration.GetSection("EventGridOptions")["TopicName"], builder.Configuration.GetSection("EventGridOptions")["SubscriptionName"], new AzureKeyCredential(builder.Configuration.GetSection("EventGridOptions")["AccessKey"]));
 });
 builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection(nameof(StorageOptions)));
 builder.Services.Configure<EventGridOptions>(builder.Configuration.GetSection(nameof(EventGridOptions)));

@@ -2,24 +2,20 @@ using Azure.Messaging.EventGrid;
 using Azure.Messaging.EventGrid.Namespaces;
 using Azure.Messaging.EventGrid.SystemEvents;
 using Azure.Storage.Blobs;
-using Microsoft.Extensions.Options;
 
 namespace PullDeliveryDemo;
 
 public class Receiver(
-    EventGridClient eventGridClient,
+    EventGridReceiverClient eventGridClient,
     BlobContainerClient blobContainerClient,
-    ILogger<Receiver> logger,
-    IOptions<EventGridOptions> eventGridOptions)
+    ILogger<Receiver> logger)
     : BackgroundService
 {
-    private readonly string subscriptionName = eventGridOptions.Value.SubscriptionName;
-    private readonly string topicName = eventGridOptions.Value.TopicName;
     private readonly TimeSpan visibilityTimeout = TimeSpan.FromSeconds(30);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await foreach (var detail in eventGridClient.StreamCloudEvents(topicName, subscriptionName, maxEvents: 100, maxWaitTime: TimeSpan.FromSeconds(10), stoppingToken))
+        await foreach (var detail in eventGridClient.StreamCloudEvents(maxEvents: 100, maxWaitTime: TimeSpan.FromSeconds(10), stoppingToken))
         {
             var @event = detail.Event;
             var brokerProperties = detail.BrokerProperties;
@@ -46,7 +42,7 @@ public class Receiver(
                 logger.LogInformation("Received event: {EventType}", @event.Type);
             }
 
-            await eventGridClient.AcknowledgeCloudEventsAsync(topicName, subscriptionName, new AcknowledgeOptions(lockTokens), stoppingToken);
+            await eventGridClient.AcknowledgeAsync(lockTokens, stoppingToken);
         }
     }
 
@@ -57,7 +53,7 @@ public class Receiver(
             try
             {
                 await Task.Delay(TimeSpan.FromSeconds(visibilityTimeout.TotalSeconds / 2), cancellationToken);
-                RenewCloudEventLocksResult result = await eventGridClient.RenewCloudEventLocksAsync(topicName, subscriptionName, new RenewLockOptions(lockTokens), cancellationToken);
+                RenewLocksResult result = await eventGridClient.RenewLocksAsync(lockTokens, cancellationToken);
 
                 logger.LocksRenewed(lockTokens, result.SucceededLockTokens, result.FailedLockTokens.Count > 0 ? result.FailedLockTokens.Select(f => f.LockToken) : [], result);
             }

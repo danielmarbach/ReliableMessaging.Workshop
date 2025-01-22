@@ -6,16 +6,11 @@ using Microsoft.Extensions.Options;
 namespace PullDelivery;
 
 public class Receiver(
-    EventGridClient eventGridClient,
+    EventGridReceiverClient eventGridClient,
     ILogger<Receiver> logger,
     IOptions<EventGridOptions> eventGridOptions)
     : BackgroundService
 {
-    private readonly EventGridClient eventGridClient = eventGridClient;
-    private readonly ILogger<Receiver> logger = logger;
-    private readonly string subscriptionName = eventGridOptions.Value.SubscriptionName;
-    private readonly string topicName = eventGridOptions.Value.TopicName;
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // TODO

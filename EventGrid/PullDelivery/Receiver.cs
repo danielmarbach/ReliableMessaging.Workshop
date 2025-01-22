@@ -1,26 +1,21 @@
 using Azure;
 using Azure.Core.Serialization;
 using Azure.Messaging.EventGrid.Namespaces;
-using Microsoft.Extensions.Options;
 
 namespace PullDelivery;
 
 public class Receiver(
-    EventGridClient eventGridClient,
-    ILogger<Receiver> logger,
-    IOptions<EventGridOptions> eventGridOptions)
+    EventGridReceiverClient eventGridClient,
+    ILogger<Receiver> logger)
     : BackgroundService
 {
-    private readonly string subscriptionName = eventGridOptions.Value.SubscriptionName;
-    private readonly string topicName = eventGridOptions.Value.TopicName;
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var toRelease = new List<string>();
         var toAcknowledge = new List<string>();
         var toReject = new List<string>();
 
-        await foreach (var detail in eventGridClient.StreamCloudEvents(topicName, subscriptionName, maxEvents: 100, maxWaitTime: TimeSpan.FromSeconds(10), stoppingToken))
+        await foreach (var detail in eventGridClient.StreamCloudEvents(maxEvents: 100, maxWaitTime: TimeSpan.FromSeconds(10), stoppingToken))
         {
             var @event = detail.Event;
             var brokerProperties = detail.BrokerProperties;
@@ -45,21 +40,21 @@ public class Receiver(
         {
             logger.Releasing(toRelease.Count);
             // ignoring the result because it is a demo
-            _ = await eventGridClient.ReleaseCloudEventsAsync(topicName, subscriptionName, new ReleaseOptions(toRelease), cancellationToken: stoppingToken);
+            _ = await eventGridClient.ReleaseAsync(toRelease, cancellationToken: stoppingToken);
         }
 
         if (toAcknowledge.Count > 0)
         {
             logger.Acknowledge(toAcknowledge.Count);
             // ignoring the result because it is a demo
-            _ = await eventGridClient.AcknowledgeCloudEventsAsync(topicName, subscriptionName, new AcknowledgeOptions(toAcknowledge), stoppingToken);
+            _ = await eventGridClient.AcknowledgeAsync(toAcknowledge, stoppingToken);
         }
 
         if (toReject.Count > 0)
         {
             logger.Reject(toReject.Count);
             // ignoring the result because it is a demo
-            _ = await eventGridClient.RejectCloudEventsAsync(topicName, subscriptionName, new RejectOptions(toReject), stoppingToken);
+            _ = await eventGridClient.RejectAsync(toReject, stoppingToken);
         }
     }
 }
