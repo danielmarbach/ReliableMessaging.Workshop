@@ -36,8 +36,7 @@ public class KafkaProcessor(
             // Every AutoCommitIntervalMs milliseconds, the Confluent.Kafka client will commit the latest offsets for all partitions it has polled. Those offsets are stored in Kafka’s internal __consumer_offsets topic.
             EnableAutoCommit = true, // default is true,
             AutoCommitIntervalMs = 5000, // default is 5000,
-            AutoOffsetReset = processorOptions.Value.RestartFromBeginning
-                ? AutoOffsetReset.Earliest : AutoOffsetReset.Latest,
+            AutoOffsetReset = AutoOffsetReset.Earliest,
             //BrokerVersionFallback = "1.0.0",
             //Debug = "consumer,cgrp,fetch,protocol,broker,security",
         };
@@ -49,6 +48,8 @@ public class KafkaProcessor(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await Task.Yield();
+
         var channelObservations = new ConcurrentDictionary<string, int>();
 
         while (!stoppingToken.IsCancellationRequested)
@@ -58,7 +59,7 @@ public class KafkaProcessor(
             var channel = consumeResult.Message.Key;
             var contentType = Encoding.UTF8.GetString(consumeResult.Message.Headers.GetLastBytes("content-type"));
 
-            var temperatureChanged = serializer.Deserialize<TemperatureChanged>(
+            var temperatureChanged = await serializer.DeserializeAsync<TemperatureChanged>(
                 new MessageContent { Data = BinaryData.FromBytes(consumeResult.Message.Value), ContentType = contentType },
                 stoppingToken);
 
