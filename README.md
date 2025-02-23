@@ -86,3 +86,7 @@ https://t.ly/mPMrU
 - [Azure Service Bus vs Event Grid Pull Delivery](https://yourazurecoach.com/2023/12/22/azure-service-bus-vs-event-grid-pull-delivery/)
 - [Azure Service Bus vs Event Grid](https://yourazurecoach.com/2021/08/11/azure-service-bus-vs-event-grid/)
 - [Azure Service Bus vs Event Grid Pull Delivery](https://yourazurecoach.com/2023/12/22/azure-service-bus-vs-event-grid-pull-delivery/)
+
+### General
+
+- [Voxxed Athens 2018 - Eventing, Serverless, and the Extensible Enterprise by Clemens Vasters](https://www.youtube.com/watch?v=qCNXUUlhJJE&list=WL)
