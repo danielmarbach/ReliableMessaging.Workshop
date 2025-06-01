@@ -16,6 +16,11 @@ public class Processor(
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        if (processorOptions.Value.UseKafka)
+        {
+            return;
+        }
+
         await RestartFromBeginningIfNecessary(processorOptions.Value.RestartFromBeginning, blobContainerClient);
 
         var channelObservations = new ConcurrentDictionary<string, int>();

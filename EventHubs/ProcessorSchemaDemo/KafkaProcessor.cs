@@ -21,6 +21,13 @@ public class KafkaProcessor(
     [MemberNotNull(nameof(consumer))]
     public override Task StartAsync(CancellationToken cancellationToken)
     {
+        if (!processorOptions.Value.UseKafka)
+        {
+#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+            return Task.CompletedTask;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+        }
+
         var config = new ConsumerConfig
         {
             BootstrapServers = $"{eventHubsOptions.Value.FullyQualifiedNamespace}:9093",
