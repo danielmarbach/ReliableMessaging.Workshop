@@ -77,10 +77,14 @@ public class Receiver(
         {
             var blobName = blobCreatedEventData.Url.Split('/').Last();
 
-            var downloaded = await blobContainerClient.GetBlobClient(blobName).DownloadAsync(stoppingToken);
-            await using var contentStream = downloaded.Value.Content;
-            using var reader = new StreamReader(contentStream);
-            logger.BlobDownloaded(blobName, await reader.ReadToEndAsync(stoppingToken));
+            var blobClient = blobContainerClient.GetBlobClient(blobName);
+            if (await blobClient.ExistsAsync(stoppingToken))
+            {
+                var downloaded = await blobClient.DownloadAsync(stoppingToken);
+                await using var contentStream = downloaded.Value.Content;
+                using var reader = new StreamReader(contentStream);
+                logger.BlobDownloaded(blobName, await reader.ReadToEndAsync(stoppingToken));
+            }
         }
         finally
         {
