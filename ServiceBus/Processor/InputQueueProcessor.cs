@@ -1,19 +1,20 @@
 using System.Transactions;
 using Azure.Messaging.ServiceBus;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 
 namespace Processor;
 
 public class InputQueueProcessor(
-    IAzureClientFactory<ServiceBusClient> clientFactory,
+    [FromKeyedServices("TransactionalClient")] ServiceBusClient serviceBusClient,
     IOptions<ServiceBusOptions> serviceBusOptions,
     ILogger<InputQueueProcessor> logger)
     : IHostedService, IAsyncDisposable
 {
-    private readonly ServiceBusClient serviceBusClient = clientFactory.CreateClient("TransactionalClient");
     private ServiceBusProcessor? queueProcessor;
     private ServiceBusSender? publisher;
+    private static readonly TimeSpan LongerThanLockDuration = TimeSpan.FromSeconds(6);
+    private static readonly TimeSpan LongerThanMaxRenewal = TimeSpan.FromSeconds(15);
+    long numberOfMessagesProcessed = 0;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -88,7 +89,7 @@ public class InputQueueProcessor(
         // will make sure operations will enlist
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-        var activateSensor = message.Body.ToObjectFromJson<ActivateSensor>();
+        var activateSensor = message.Body.ToObjectFromJson<ActivateSensor>()!;
         logger.ActivateSensorReceived(activateSensor.ChannelId);
 
         try
@@ -108,9 +109,10 @@ public class InputQueueProcessor(
             };
 
             // the order here doesn't matter because the message will only go out if the rest was successful
-            await publisher.SendMessageAsync(sensorActivatedMessage, cancellationToken);
+            await publisher!.SendMessageAsync(sensorActivatedMessage, cancellationToken);
 
-            await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(1, 15)), cancellationToken);
+            var isTenthMessage = Interlocked.Increment(ref numberOfMessagesProcessed) % 10 == 0;
+            await Task.Delay(isTenthMessage ? LongerThanMaxRenewal : LongerThanLockDuration, cancellationToken);
 
             scope.Complete();
         }

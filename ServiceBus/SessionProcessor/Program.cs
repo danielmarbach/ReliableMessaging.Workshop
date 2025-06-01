@@ -4,8 +4,7 @@ using SessionProcessor;
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddAzureClients(azureClientBuilder =>
 {
-    azureClientBuilder.AddServiceBusClient(builder.Configuration.GetSection("ServiceBusOptions")["ConnectionStringNoManageRights"])
-        .WithName("Client");
+    azureClientBuilder.AddServiceBusClient(builder.Configuration.GetSection("ServiceBusOptions")["ConnectionStringNoManageRights"]);
     azureClientBuilder.AddServiceBusAdministrationClient(builder.Configuration.GetSection("ServiceBusOptions")["ConnectionString"]);
 });
 

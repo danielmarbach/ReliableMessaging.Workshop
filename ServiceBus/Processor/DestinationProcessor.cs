@@ -1,18 +1,19 @@
+using System.Collections.Concurrent;
 using Azure.Messaging.ServiceBus;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 
 namespace Processor;
 
 public class DestinationProcessor(
-    IAzureClientFactory<ServiceBusClient> clientFactory,
+    [FromKeyedServices("Client")] ServiceBusClient serviceBusClient,
     IOptions<ServiceBusOptions> serviceBusOptions,
     ILogger<DestinationProcessor> logger)
     : IHostedService, IAsyncDisposable
 {
-    private readonly ServiceBusClient serviceBusClient = clientFactory.CreateClient("Client");
     private ServiceBusProcessor? queueProcessor;
-    private long sensorActivatedCounter = 0;
+    // Of course, an ever-growing dictionary is not a good idea, this data structure usage
+    // is for demonstration purposes only.
+    readonly ConcurrentDictionary<string, bool> receivedMessageIds = new();
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -42,8 +43,8 @@ public class DestinationProcessor(
 
     Task HandleSensorActivated(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
-        var sensorActivated = Interlocked.Increment(ref sensorActivatedCounter);
-        logger.OrderAccepted(sensorActivated <= serviceBusOptions.Value.NumberOfCommands ? LogLevel.Information : LogLevel.Warning, sensorActivated);
+        var alreadyReceived = receivedMessageIds.AddOrUpdate(message.MessageId, static _ => false, static (_, _) => true);
+        logger.SensorActivated(alreadyReceived ? LogLevel.Warning : LogLevel.Information, message.MessageId);
         return Task.CompletedTask;
     }
 

@@ -1,16 +1,14 @@
 using Azure.Messaging.ServiceBus;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 
 namespace SessionProcessor;
 
 public class InputQueueProcessor(
-    IAzureClientFactory<ServiceBusClient> clientFactory,
+    ServiceBusClient serviceBusClient,
     IOptions<ServiceBusOptions> serviceBusOptions,
     ILogger<InputQueueProcessor> logger)
     : IHostedService, IAsyncDisposable
 {
-    private readonly ServiceBusClient serviceBusClient = clientFactory.CreateClient("Client");
     private ServiceBusSessionProcessor? queueProcessor;
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -59,7 +57,7 @@ public class InputQueueProcessor(
     {
         var message = arg.Message;
         var channel = arg.SessionId;
-        var processTemperatureChange = message.Body.ToObjectFromJson<ProcessTemperatureChange>();
+        var processTemperatureChange = message.Body.ToObjectFromJson<ProcessTemperatureChange>()!;
 
         var sessionState = await arg.GetSessionStateAsync(cancellationToken);
         var channelState = sessionState?.ToObjectFromJson<ChannelState>() ?? new ChannelState();

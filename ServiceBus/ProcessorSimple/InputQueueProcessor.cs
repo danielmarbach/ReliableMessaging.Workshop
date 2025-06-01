@@ -6,14 +6,16 @@ using Microsoft.Extensions.Options;
 namespace Processor;
 
 public class InputQueueProcessor(
-    IAzureClientFactory<ServiceBusClient> clientFactory,
+    [FromKeyedServices("TransactionalClient")] ServiceBusClient serviceBusClient,
     IOptions<ServiceBusOptions> serviceBusOptions,
     ILogger<InputQueueProcessor> logger)
     : IHostedService, IAsyncDisposable
 {
-    private readonly ServiceBusClient serviceBusClient = clientFactory.CreateClient("TransactionalClient");
     private ServiceBusProcessor? queueProcessor;
     private ServiceBusSender? publisher;
+    private static readonly TimeSpan LongerThanLockDuration = TimeSpan.FromSeconds(6);
+    private static readonly TimeSpan LongerThanMaxRenewal = TimeSpan.FromSeconds(15);
+    long numberOfMessagesProcessed = 0;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -95,7 +97,8 @@ public class InputQueueProcessor(
         // will make sure operations will enlist
 
         // here to simulate some work
-        await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(1, 15)), cancellationToken);
+        var isTenthMessage = Interlocked.Increment(ref numberOfMessagesProcessed) % 10 == 0;
+        await Task.Delay(isTenthMessage ? LongerThanMaxRenewal : LongerThanLockDuration, cancellationToken);
     }
 
     Task HandleSensorActivated(ServiceBusReceivedMessage message, CancellationToken cancellationToken)

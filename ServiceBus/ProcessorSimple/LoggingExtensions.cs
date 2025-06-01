@@ -25,9 +25,9 @@ static partial class LoggingExtensions
 
     [LoggerMessage(
         EventId = 3,
-        Message = "#{NumberOfSensors} have been activated.")]
-    public static partial void OrderAccepted(
-        this ILogger logger, LogLevel logLevel, long numberOfSensors);
+        Message = "Sensor with ID {ChannelId} activated.")]
+    public static partial void SensorActivated(
+        this ILogger logger, LogLevel logLevel, string channelId);
 
     [LoggerMessage(
         EventId = 4,

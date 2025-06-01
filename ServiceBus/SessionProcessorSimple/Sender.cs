@@ -1,19 +1,14 @@
 using System.Runtime.CompilerServices;
 using Azure.Messaging.ServiceBus;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 
 namespace SessionProcessor;
 
 public class Sender(
-    IAzureClientFactory<ServiceBusClient> clientFactory,
-    IOptions<ServiceBusOptions> serviceBusOptions,
-    ILogger<Sender> logger)
+    ServiceBusClient serviceBusClient,
+    IOptions<ServiceBusOptions> serviceBusOptions)
     : IHostedService
 {
-    private readonly ServiceBusClient serviceBusClient = clientFactory.CreateClient("Client");
-    private readonly ILogger<Sender> logger = logger;
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         await using var commandSender = serviceBusClient.CreateSender(serviceBusOptions.Value.InputQueue, new ServiceBusSenderOptions

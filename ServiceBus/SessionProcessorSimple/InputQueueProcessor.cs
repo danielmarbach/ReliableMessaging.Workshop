@@ -1,16 +1,14 @@
 using Azure.Messaging.ServiceBus;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Options;
 
 namespace SessionProcessor;
 
 public class InputQueueProcessor(
-    IAzureClientFactory<ServiceBusClient> clientFactory,
+    ServiceBusClient serviceBusClient,
     IOptions<ServiceBusOptions> serviceBusOptions,
     ILogger<InputQueueProcessor> logger)
     : IHostedService, IAsyncDisposable
 {
-    private readonly ServiceBusClient serviceBusClient = clientFactory.CreateClient("Client");
     private readonly IOptions<ServiceBusOptions> serviceBusOptions = serviceBusOptions;
     private ServiceBusSessionProcessor? queueProcessor;
 
