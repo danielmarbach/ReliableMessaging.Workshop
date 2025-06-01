@@ -30,7 +30,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        cancellationTokenSource.Cancel();
+        await cancellationTokenSource.CancelAsync();
         while (concurrencyLimiter.CurrentCount != MaximumConcurrency)
         {
             await Task.Delay(50, CancellationToken.None).ConfigureAwait(false);
@@ -79,7 +79,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
 
         try
         {
-            var envelop = message.Body.ToObjectFromJson<Envelop<ActivateSensor>>(StorageJsonContext.Default.Options);
+            var envelop = message.Body.ToObjectFromJson<Envelop<ActivateSensor>>(StorageJsonContext.Default.Options)!;
 
             logger.StartHandling(message.MessageId, envelop.Content.SomeValue);
 
