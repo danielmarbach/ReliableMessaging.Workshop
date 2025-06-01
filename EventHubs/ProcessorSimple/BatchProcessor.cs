@@ -27,6 +27,10 @@ public sealed class BatchProcessor(
         try
         {
             var readOnlyList = (IReadOnlyList<EventData>)events;
+            if(readOnlyList.Count == 0)
+            {
+                return;
+            }
 
             logger.BatchReceived(readOnlyList.Count, partition.PartitionId);
 
