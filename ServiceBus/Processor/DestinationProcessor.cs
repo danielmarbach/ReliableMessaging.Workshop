@@ -43,8 +43,8 @@ public class DestinationProcessor(
 
     Task HandleSensorActivated(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
-        var alreadyReceived = receivedMessageIds.AddOrUpdate(message.MessageId, static _ => false, static (_, _) => true);
-        logger.SensorActivated(alreadyReceived ? LogLevel.Warning : LogLevel.Information, message.MessageId);
+        var alreadyReceived = receivedMessageIds.AddOrUpdate(message.CorrelationId, static _ => false, static (_, _) => true);
+        logger.SensorActivated(alreadyReceived ? LogLevel.Warning : LogLevel.Information, message.CorrelationId);
         return Task.CompletedTask;
     }
 
