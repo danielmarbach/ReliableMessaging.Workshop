@@ -1,6 +1,7 @@
 using Azure.Identity;
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Primitives;
+using Azure.Messaging.EventHubs.Processor;
 
 namespace ProcessorSchemaDemo;
 
@@ -36,10 +37,8 @@ public sealed class BatchProcessor(
 
             var lastEvent = readOnlyList[^1];
 
-            await UpdateCheckpointAsync(
-                partition.PartitionId,
-                lastEvent.Offset,
-                lastEvent.SequenceNumber,
+            await UpdateCheckpointAsync(partition.PartitionId,
+                new CheckpointPosition(lastEvent.OffsetString, lastEvent.SequenceNumber),
                 cancellationToken);
         }
         catch (Exception ex)
