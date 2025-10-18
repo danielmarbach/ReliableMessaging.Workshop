@@ -181,3 +181,31 @@ Alternatively it is possible to use Dev-Tunnles
 - [Azure Service Bus to Event Grid integration overview](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-to-event-grid-integration-concept?tabs=event-grid-event-schema)
 - [Azure Service Bus as an Event Grid source](https://learn.microsoft.com/en-us/azure/event-grid/event-schema-service-bus)
 - [Tutorial: Respond to Azure Service Bus events received via Azure Event Grid by using Azure Logic Apps](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-to-event-grid-integration-example)
+
+## Troubleshooting
+
+In case off
+
+```text
+{
+    "status": "Failed",
+    "error": {
+        "code": "InternalServerError",
+        "message": "Unable to verify access to resource /subscriptions/SUBSCRIPTION_ID/resourceGroups/RESOURCEGROUP/providers/Microsoft.Storage/storageAccounts/YOURSTORAGEACCCOUNT. Please try again in a few minutes."
+    }
+}
+```
+
+the deployment principle probably requires EventGrid Contributor role.
+
+```bash
+PRINCIPAL_ID=$(az ad signed-in-user show --query id -o tsv)
+```
+
+```bash
+# Assign EventGrid Contributor role at resource group level
+az role assignment create \
+  --assignee $PRINCIPAL_ID \
+  --role "EventGrid Contributor" \
+  --resource-group <your-resource-group-name>
+```
