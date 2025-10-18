@@ -145,6 +145,9 @@ resource SystemTopicSubscription 'Microsoft.EventGrid/systemTopics/eventSubscrip
       eventTimeToLiveInMinutes: 1440
     }
   }
+  dependsOn: [
+    roleAssignment  // Wait for the role assignment to complete
+  ]
 }
 
 var eventGridAccessKey = EventGridNamespace.listKeys().key1
