@@ -14,11 +14,10 @@ public class Sender(QueueServiceClient queueServiceClient, IConfiguration config
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            // TODO
-            // 1. Create an envelope with an ActivateSensor command
-            // 2. Set the corresponding headers
-            // 3. Serialize the envelop using BinaryData
-            // 4. Send the serialize envelop with a time to live of one day and no visibility timeout
+            // TODO 1. Create an envelope with an ActivateSensor command
+            // TODO 2. Set the corresponding headers
+            // TODO 3. Serialize the envelop using BinaryData
+            // TODO 4. Send the serialize envelop with a time to live of one day and no visibility timeout
 
             await Task.Delay(1000, stoppingToken);
         }

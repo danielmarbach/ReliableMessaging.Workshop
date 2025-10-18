@@ -53,8 +53,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
             concurrencyIncrease = 0;
 
             QueueMessage[]? messages = Array.Empty<QueueMessage>();
-            // TODO
-            // 5. Receive as many messages as needed
+            // TODO 5. Receive as many messages as needed
             // HINT: concurrencyLimiter.CurrentCount
             foreach (var message in messages)
             {
@@ -82,8 +81,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
 
         try
         {
-            // TODO
-            // 6. Deserialize the Envelop with the ActivateSensor data
+            // TODO 6. Deserialize the Envelop with the ActivateSensor data
 
             // Simulate some work
             await Task.Delay(workTime, cancellationToken);
@@ -93,13 +91,11 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
                 message = message.Update(updateReceipt);
             }
 
-            // TODO
-            // 7. Mark the message as processed
+            // TODO 7. Mark the message as processed
         }
         catch (OperationCanceledException)
         {
-            // TODO
-            // 8. When processing failed during shutdown try to make it immediately visible again.
+            // TODO 8. When processing failed during shutdown try to make it immediately visible again.
         }
         catch(Exception ex) when(!cancellationToken.IsCancellationRequested)
         {
@@ -123,8 +119,7 @@ public class Receiver(QueueServiceClient queueServiceClient, IConfiguration conf
                 await Task.Delay(TimeSpan.FromSeconds(visibilityTimeout.TotalSeconds / 2), cancellationToken);
 
                 UpdateReceipt updateReceipt = null;
-                // TODO
-                // 9. Update the visibility time of the message
+                // TODO 9. Update the visibility time of the message
 
                 message = message.Update(updateReceipt);
                 sourceToPopReceipt.AddOrUpdate(coordinationTokenSource, updateReceipt);

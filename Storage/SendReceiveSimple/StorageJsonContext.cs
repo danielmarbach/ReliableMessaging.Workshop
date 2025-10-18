@@ -4,6 +4,4 @@ namespace SendReceive;
 
 [JsonSerializable(typeof(ActivateSensor))]
 [JsonSerializable(typeof(Envelop<ActivateSensor>))]
-internal partial class StorageJsonContext : JsonSerializerContext
-{
-}
+internal partial class StorageJsonContext : JsonSerializerContext;
