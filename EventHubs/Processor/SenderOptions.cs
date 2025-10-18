@@ -6,5 +6,5 @@ public record SenderOptions
 
     public int NumberOfDatapointPerChannel { get; set; }
 
-    public string[] Channels { get; set; } = Array.Empty<string>();
+    public string[] Channels { get; set; } = [];
 }

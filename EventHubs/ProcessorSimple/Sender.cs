@@ -21,8 +21,7 @@ public class Sender(IOptions<SenderOptions> senderOptions, EventHubProducerClien
                                    eventHubProducerClient)
                                .WithCancellation(cancellationToken))
             {
-                // TODO
-                // 3. Send the batches using the eventHubProducerClient
+                // TODO 3. Send the batches using the eventHubProducerClient
             }
         }
     }
@@ -38,8 +37,7 @@ public class Sender(IOptions<SenderOptions> senderOptions, EventHubProducerClien
         var yesterday = DateTimeOffset.UtcNow.Subtract(TimeSpan.FromDays(2));
         for (var i = 0; i < numberOfDatapointPerChannel; i++)
         {
-            // TODO
-            // 1. Create event data with the necessary temperature changed in the event body
+            // TODO 1. Create event data with the necessary temperature changed in the event body
             // Hint: It is possible to use the properties to store the channel for batching
             EventData eventData = null;
             eventsToSend.Enqueue(eventData);
@@ -56,8 +54,7 @@ public class Sender(IOptions<SenderOptions> senderOptions, EventHubProducerClien
         {
             var eventData = queuedEvents.Peek();
 
-            // TODO
-            // 2. Create a batch when currentBatch is null that uses the channel as a partition key to make sure
+            // TODO 2. Create a batch when currentBatch is null that uses the channel as a partition key to make sure
             // everything from the same channel is ordered. Assign the result to currentBatch
 
             if (!currentBatch.TryAdd(eventData))

@@ -1,5 +1,6 @@
 using Azure.Messaging.EventHubs;
 using Azure.Messaging.EventHubs.Primitives;
+using Azure.Messaging.EventHubs.Processor;
 
 namespace Processor;
 
@@ -40,8 +41,7 @@ public sealed class BatchProcessor(
 
             await UpdateCheckpointAsync(
                 partition.PartitionId,
-                lastEvent.Offset,
-                lastEvent.SequenceNumber,
+                new CheckpointPosition(lastEvent.OffsetString, lastEvent.SequenceNumber),
                 cancellationToken);
         }
         catch (Exception ex)
