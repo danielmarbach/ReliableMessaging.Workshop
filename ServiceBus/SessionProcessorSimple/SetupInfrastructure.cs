@@ -15,8 +15,7 @@ public class SetupInfrastructure(
             await administrationClient.DeleteQueueAsync(serviceBusOptions.Value.InputQueue, cancellationToken);
         }
 
-        // TODO
-        // 10. Create the queue with session support
+        // TODO 10. Create the queue with session support
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

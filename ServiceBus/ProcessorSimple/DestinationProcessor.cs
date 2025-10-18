@@ -32,9 +32,8 @@ public class DestinationProcessor(
 
     private async Task ProcessMessages(ProcessMessageEventArgs arg)
     {
-        // TODO
-        // 12. Extract the MessageType from the ApplicationProperties and call HandleSensorActivated if the type matches
-        // 13. otherwise consume the message
+        // TODO 12. Extract the MessageType from the ApplicationProperties and call HandleSensorActivated if the type matches
+        // TODO 13. otherwise consume the message
     }
 
     Task HandleSensorActivated(ServiceBusReceivedMessage message, CancellationToken cancellationToken)

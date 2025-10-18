@@ -87,13 +87,12 @@ public class InputQueueProcessor(
 
     async Task HandleActivateSensor(ServiceBusReceivedMessage message, CancellationToken cancellationToken)
     {
-        // TODO
-        // 6. Wrap everything in a transaction scope with async flow options enabled
-        // 7. Deserialize the body into an ActivateSensor instance
-        // 8. Create a SensorActivated type and create a new ServiceBusMessage with that content
-        // 9. Set the CorrelationId to the original message ID
-        // 10. Set the application properties MessageType to the SensorActivated type
-        // 11. Publish the event with the "publisher"  sender and eventually complete the transaction scope
+        // TODO 6. Wrap everything in a transaction scope with async flow options enabled
+        // TODO 7. Deserialize the body into an ActivateSensor instance
+        // TODO 8. Create a SensorActivated type and create a new ServiceBusMessage with that content
+        // TODO 9. Set the CorrelationId to the original message ID
+        // TODO 10. Set the application properties MessageType to the SensorActivated type
+        // TODO 11. Publish the event with the "publisher"  sender and eventually complete the transaction scope
         // will make sure operations will enlist
 
         // here to simulate some work
