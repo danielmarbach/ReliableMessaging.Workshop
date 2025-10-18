@@ -5,12 +5,12 @@
   <ItemGroup>
     <PackageVersion Include="Azure.Data.SchemaRegistry" Version="1.4.0" />
     <PackageVersion Include="Azure.Identity" Version="1.17.0" />
-    <PackageVersion Include="Azure.Messaging.EventGrid" Version="4.29.0" />
-    <PackageVersion Include="Azure.Messaging.EventGrid.Namespaces" Version="1.0.0" />
+    <PackageVersion Include="Azure.Messaging.EventGrid" Version="5.0.0" />
+    <PackageVersion Include="Azure.Messaging.EventGrid.Namespaces" Version="1.1.0" />
     <PackageVersion Include="Azure.Messaging.EventHubs.Processor" Version="5.12.2" />
     <PackageVersion Include="Azure.Messaging.ServiceBus" Version="7.20.1" />
     <PackageVersion Include="Azure.Storage.Queues" Version="12.24.0" />
-    <PackageVersion Include="Azure.Storage.Blobs" Version="12.23.0" />
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.26.0" />
     <PackageVersion Include="Confluent.Kafka" Version="2.12.0" />
     <PackageVersion Include="Microsoft.Azure.Data.SchemaRegistry.ApacheAvro" Version="1.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Azure" Version="1.13.0" />

@@ -20,7 +20,7 @@ public class Queue
     {
         if (!await channel.Reader.WaitToReadAsync(cancellationToken))
         {
-            return Array.Empty<FetchMessagesFromQueue>();
+            return [];
         }
 
         var hashSet = new HashSet<FetchMessagesFromQueue>(EqualityComparer<FetchMessagesFromQueue>.Default);
