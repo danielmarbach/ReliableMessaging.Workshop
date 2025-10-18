@@ -1,7 +1,10 @@
 param location string = resourceGroup().location
 param storageAccountName string = 'testreliable'
 param storageAccountSystemTopic string = 'testreliablesystemtopic'
+param storageAccountSystemTopicSubscription string = 'subscription'
 param eventGridNamespaceName string = 'testreliableeventgridnamespace'
+param eventGridTopicName string = 'testreliableeventgridtopic'
+param eventGridTopicSubscriptionName string = 'testreliableeventgridtopicsubscription'
 
 resource EventGridNamespace 'Microsoft.EventGrid/namespaces@2023-12-15-preview' = {
   name: eventGridNamespaceName
@@ -25,7 +28,7 @@ resource StorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
   location: location
   sku: {
-    name: 'Standard_RAGRS'
+    name: 'Standard_LRS'
   }
   kind: 'StorageV2'
   properties: {
@@ -62,7 +65,7 @@ resource StorageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
 
 resource EventGridNamespaceTopic 'Microsoft.EventGrid/namespaces/topics@2023-12-15-preview' = {
   parent: EventGridNamespace
-  name: 'testtopic'
+  name: eventGridTopicName
   properties: {
     publisherType: 'Custom'
     inputSchema: 'CloudEventSchemaV1_0'
@@ -84,7 +87,7 @@ resource SystemTopic 'Microsoft.EventGrid/systemTopics@2023-12-15-preview' = {
 
 resource EventGridNamespaceTopicSubscription 'Microsoft.EventGrid/namespaces/topics/eventSubscriptions@2023-12-15-preview' = {
   parent: EventGridNamespaceTopic
-  name: 'testsubscription'
+  name: eventGridTopicSubscriptionName
   properties: {
     deliveryConfiguration: {
       deliveryMode: 'Queue'
@@ -118,7 +121,7 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 
 resource SystemTopicSubscription 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2023-12-15-preview' = {
   parent: SystemTopic
-  name: '${SystemTopic.name}Subscription'
+  name: storageAccountSystemTopicSubscription
   properties: {
     deliveryWithResourceIdentity: {
       identity: {
@@ -152,6 +155,7 @@ resource SystemTopicSubscription 'Microsoft.EventGrid/systemTopics/eventSubscrip
 
 var eventGridAccessKey = EventGridNamespace.listKeys().key1
 
+#disable-next-line outputs-should-not-contain-secrets
 output eventGridAccessKey string = eventGridAccessKey
 output eventGridName string = EventGridNamespace.name
 output eventGridHostName string = 'https://${EventGridNamespace.properties.topicsConfiguration.hostname}'
