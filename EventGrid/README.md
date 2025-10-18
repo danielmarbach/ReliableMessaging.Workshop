@@ -196,7 +196,7 @@ In case off
 }
 ```
 
-the deployment principle probably requires EventGrid Contributor role.
+the deployment principle probably requires `EventGrid Contributor` role.
 
 ```bash
 PRINCIPAL_ID=$(az ad signed-in-user show --query id -o tsv)
