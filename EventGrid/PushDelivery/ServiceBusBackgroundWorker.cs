@@ -31,12 +31,22 @@ public class ServiceBusBackgroundWorker(
         });
         logger.LogInformation("Starting processing");
 
-        var messages = await receiver.ReceiveMessagesAsync(100, cancellationToken: cancellationToken);
-        foreach (var message in messages)
+        while (!cancellationToken.IsCancellationRequested)
         {
-            logger.HandledMessage(message.Body.ToString());
+            var messages = await receiver.ReceiveMessagesAsync(100, maxWaitTime: TimeSpan.FromSeconds(10), cancellationToken: cancellationToken);
+            if (messages.Count == 0)
+            {
+                break;
+            }
+
+            foreach (var message in messages)
+            {
+                logger.HandledMessage(message.Body.ToString());
+            }
         }
 
         logger.LogInformation("Stopping processing");
+
+        await receiver.CloseAsync(cancellationToken);
     }
 }
