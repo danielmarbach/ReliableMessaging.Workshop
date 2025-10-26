@@ -32,14 +32,14 @@ Optional:
 
 | 09:00 - 10:30 | Storage Queues |
 |---|---|
-| 10:30 - 10:50 | break |
-| 10:50 - 12:30 | Service Bus |
-| 12:30 - 13:30 | Lunch |
-| 13:30 - 14:00 | Service Bus |
-| 14:00 - 15:00 | Event Hubs |
-| 15:00 - 15:20 | break |
-| 15:20 - 15:45 | Event Hubs |
-| 15:45 - 17:00 | Event Grid |
+| 10:30 - 10:45 | break |
+| 10:45 - 12:00 | Service Bus |
+| 12:00 - 13:00 | Lunch |
+| 13:00 - 13:15 | Service Bus |
+| 13:15 - 14:45 | Event Hubs |
+| 14:45 - 15:00 | break |
+| 15:00 - 15:15 | Event Hubs |
+| 15:15 - 17:00 | Event Grid / Wrap up |
 
 ## Time table (Two Day Version)
 
